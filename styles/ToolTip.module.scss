@@ -1,0 +1,17 @@
+@import './colors.scss';
+
+.tooltip{
+    position: absolute;
+    top:-1.1em;
+    left:30px;
+    z-index: 1000;
+    padding: 0;
+    width: 300px;
+}
+.tooltip-hidden{
+    display: none;
+}
+.tooltip-body{
+    padding: .5em 1em;
+    margin:5px;
+}

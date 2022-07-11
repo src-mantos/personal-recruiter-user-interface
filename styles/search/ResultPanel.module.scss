@@ -1,0 +1,51 @@
+@import './colors.scss';
+
+.rs-row{
+    // margin: 0px !important;
+    // padding:0px !important;
+    border-bottom: 1px solid black;
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    color: hsl(0deg, 0%, 29%);
+    cursor: pointer;
+}
+.rs-header{
+    cursor: progress;
+    font-weight: 800;
+}
+
+.rs-focus.rs-row{
+    background-color: #d7e0e2;
+}
+
+.rs-table{
+    background-color: #f0f0f0;
+    width: 100%;
+    max-height: 800px;
+    overflow-y: scroll;
+}
+
+.rs-title{
+    min-width: 100px;
+}
+.rs-org{
+    min-width: 100px;
+}
+.rs-loc{
+    min-width: 100px;
+}
+.rs-salary{
+    min-width: 0px;
+}
+.rs-desc{
+    min-width: 100px;
+}
+.rs-time{
+    min-width: 100px;
+}
+.rs-link{
+    max-width: 50px;
+}
+
+.rs-salary-compact, .rs-time{
+    display: none;
+}

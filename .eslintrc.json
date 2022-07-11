@@ -1,0 +1,12 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "indent": ["error", 4],
+    "object-curly-spacing": [1, "always", {
+      "objectsInObjects": false,
+      "arraysInObjects": false
+    }],
+    "space-unary-ops":2,
+    "semi":[1, "always"]
+  }
+}

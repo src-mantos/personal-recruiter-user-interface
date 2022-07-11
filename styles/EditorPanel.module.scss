@@ -1,0 +1,35 @@
+@import './colors.scss';
+
+.ep-container{
+    position:relative;
+    border: 1px solid $independence;
+    background-color: $latte;
+}
+.ep-remove-pad{
+    padding: 0px !important;
+}
+.ep-remove-marg{
+    margin: 0px;
+}
+
+.ep-float-control{
+    position: absolute;
+    right:0px;
+    top:0px;
+}
+
+.editorField{
+    padding: 0px;
+}
+
+.fieldSize{
+    width: calc(100% - 4em);
+}
+
+.indentField{
+    margin-left: 3em;
+}
+
+.iconLabel{
+    text-align: center;
+}

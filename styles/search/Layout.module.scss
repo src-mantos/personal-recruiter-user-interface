@@ -1,0 +1,15 @@
+@import './colors.scss';
+
+$collapsedWidth: 50px;
+$rgb: 230;
+
+.layout{
+    background: linear-gradient(to right, $sage 0%, $latteSearch 5px, $latteSearch calc(100% - 5px), $sage 100%);
+}
+
+.ctrl-bar{
+    padding-bottom: 0px !important;
+}
+.data-view{
+    padding-top: 0px !important;
+}
