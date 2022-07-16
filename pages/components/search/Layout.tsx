@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { IPostDataSearchRequest, IPostData } from 'data-service/types';
 import ResultPanel from './ResultPanel';
-import EditorPanel, { EditorPanelProps } from './EditorPanel';
+import EditorPanel, { EditorPanelProps } from '../EditorPanel';
 
 import useSWR from "swr";
 
@@ -23,6 +23,7 @@ enum View {
 const Layout = (props:FavoritesProps) => {
     const [view, setView] = useState<View>(View.Search);
     const [dataset, setDataset] = useState<IPostData[]>([]);
+    
     
     const tabFactory = (refView: View) => {
         return (event: React.MouseEvent)=>{
@@ -47,37 +48,26 @@ const Layout = (props:FavoritesProps) => {
             console.log("set search request");
             setSearchReq({...searchReq, keywords:search.current.value});
         }
-        if(searchReq.keywords && searchReq.keywords.trim() != ""){
-            RequestSearch();
-        }
     };
 
-    const RequestSearch = useCallback(async () => {
-        try{
-            const response:Response = await fetch("/api/data/search?keywords="+searchReq.keywords);
-            console.log( searchReq.keywords, response.status );
-            const results = await response.json();
-            setDataset([...results]);
-            console.log(dataset);
-        }catch(ex){
-            console.error(ex);
+    useEffect(()=>{
+        if(searchReq.keywords){
+            fetch("/api/data/search?keywords="+searchReq.keywords)
+                .then((response:Response)=>{
+                    response.json().then((value:any)=>{
+                        setDataset([...value]);
+                    });
+                });
         }
-            
-    }, [searchReq, dataset]);    
+    }, [searchReq]);
 
 
-    const testConfig = {
-        key:"Rando",
-        postData: {
-            captureTime : new Date(),
-            directURL : 'http://www.google.com',
-            location : "somewhere",
-            organization : "NoOne Corp",
-            title : "Rando Job Title",
-            salary : "$0.00",
-            description : "lorem ipsum",
-            postedTime: "23 days ago",
-        }
+    const [activeRecord, setActiveRecord] = useState<IPostData|undefined>(undefined);
+
+    
+    const onRecordSelect = (rec: IPostData) => {
+        console.log("Record Select Handler",activeRecord, rec);
+        setActiveRecord({...rec});
     };
 
     return (
@@ -114,10 +104,10 @@ const Layout = (props:FavoritesProps) => {
             </div>
             <div className={['tile is-parent', styles["data-view"]].join(" ")}>
                 <div className={['tile is-parent'].join(" ")}>
-                    <ResultPanel searchData={dataset} compact={false} />
+                    <ResultPanel searchData={dataset} compact={false} onSelect={onRecordSelect} />
                 </div>
                 <div className={['tile is-parent'].join(" ")}>
-                    <EditorPanel {...testConfig} />
+                    <EditorPanel key="editorPanel" postData={activeRecord} />
                 </div>
             </div>
         </div>

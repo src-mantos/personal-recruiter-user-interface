@@ -12,6 +12,14 @@
     margin: 0px;
 }
 
+// .ep-row {
+//     max-height: 100px;
+// }
+
+.ep-textArea{
+    height:calc(100% - 2em);
+}
+
 .ep-float-control{
     position: absolute;
     right:0px;
