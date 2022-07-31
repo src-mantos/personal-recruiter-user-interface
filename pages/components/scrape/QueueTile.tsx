@@ -1,6 +1,6 @@
 import { IPostDataScrapeRequest } from 'data-service/types';
 import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes } from 'react';
-import styles from '../../../styles/scrape/QueueTile.module.scss';
+import styles from '../../../styles/_components/_scrape/_queue/QueueTile.module.scss';
 
 export interface QueueTileProps extends IPostDataScrapeRequest{
     className?: string;

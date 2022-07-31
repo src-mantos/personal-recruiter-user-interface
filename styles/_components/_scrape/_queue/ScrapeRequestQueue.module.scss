@@ -1,0 +1,134 @@
+@import './colors.scss';
+
+
+$collapsedWidth: 50px;
+$rgb: 230;
+
+.tile-channel{
+    background: linear-gradient(rgba($rgb,$rgb,$rgb,1) 0%, $latte 15%, $latte 85%, rgba($rgb,$rgb,$rgb,1) 100%);
+    box-shadow: 0px 0px 10px -2px rgba(0,0,0,0.75) inset;
+}
+.rq-tile-container{
+    overflow-y: hidden;
+    overflow-x: scroll;
+    padding: 0px;
+    margin: 0px !important;
+}
+.rq-tile-container:first-child{
+    padding-left: 1em;
+}
+
+.rq-tile-wrapper {
+    padding: 1em 3px !important;
+}
+
+
+.rq-tile{
+    // padding: 0px !important;
+}
+.rq-tile > div{
+    margin: 0px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.rq-tile-element-1{
+    font-family: Roboto, serif;
+    font-size: 1.1em;
+    line-height: 1.1em;
+    white-space: nowrap;
+}
+.rq-tile-element-2{
+    font-size: .9em;
+    line-height: .9em;
+}
+
+
+.rq-tile-bk-queued{
+    background-color: $inactive-grey;
+}
+.rq-tile-bk-active{
+    background-color: $bulma-green;
+    // color: white;
+}
+.rq-tile-bk-status{
+    background-color: $inactive-blue;
+}
+.rq-tile-bk-queued,
+.rq-tile-bk-active,
+.rq-tile-bk-status{
+    border: 1px solid $tile-border-color;
+}
+
+.rq-tile-bk-active .rq-tile-element-1{
+    font-weight: bold;
+}
+
+
+.qt-done{
+    background-color: $inactive-blue;
+}
+
+.qt-active{
+    background-color: $dark-pastel-green
+}
+
+.qt-pending{
+    background-color: $inactive-grey;
+}
+
+
+// compact mode ?
+// .rq-tile-element-1{
+//     font-size: 1.1em;
+//     line-height: 1.1em;
+// }
+// .rq-tile-element-2{
+//     font-size: .8em;
+//     line-height: .8em;
+// }
+
+.rq-status-tile{
+    text-align: center;
+}
+.rq-status-tile > div{
+    margin: 0px;
+}
+
+
+.minHeight{
+    min-height:100px;
+    height: auto;
+}
+
+.qt{
+    border: 1px solid $tile-border-color;
+    padding: 5px 1.25em;
+    width: 190px;
+}
+
+.qt-text-primary{
+    font-weight: 800;
+    font-size: 1.12em;
+    line-height: 1.12em;
+}
+.qt-text-secondary{
+    font-size: .9em;
+    line-height: .9em;
+}
+
+.qt-text-primary-compact{
+    font-weight: 800;
+    font-size: 1em;
+    line-height: 1em;
+}
+.qt-text-secondary-compact{
+    font-size: .5em;
+    line-height: .5em;
+}
+
+.qt-hidden{
+    display: none;
+}
+
+
+

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes } from 'react';
 import QueueTile, {QueueTileProps, QueueTileState} from './QueueTile';
-import styles from '../../../styles/scrape/TileChannel.module.scss';
+import styles from '../../../styles/_components/_scrape/_queue/TileChannel.module.scss';
 import { IPostDataScrapeRequest } from 'data-service/types';
 
 
