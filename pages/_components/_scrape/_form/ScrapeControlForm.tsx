@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faInfoCircle, faSearch, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../../../styles/_components/_scrape/_search/ScrapeForm.module.scss';
 import { IPostDataScrapeRequest } from 'data-service/types';
-import { domValueGetter, inputFocusSelectAll } from '../../_utils/FormUtils';
+import { domValueGetter, inputFocusSelectAll, onEnterHandler } from '../../_utils/FormUtils';
 import { StylableComponent } from '../../types';
-import { ScrapeAction } from '../ScrapeManagementComponent';
+import {ScrapeAction, ScrapeActionType} from '../../_utils/_dispatchers/ScrapeDispatcher';
+import useDispatcherContext from '../../_utils/DispatcherContext';
 
 interface ScrapeControlProps extends StylableComponent {
-    isRunning: boolean;
-    onAction: React.Dispatch<ScrapeAction>
+    
 }
 
 const ScrapeControlForm = (props:ScrapeControlProps)=>{
@@ -27,20 +27,23 @@ const ScrapeControlForm = (props:ScrapeControlProps)=>{
             location: domValueGetter(requestLocation, undefined),
         };
     };
-    const queueRequest = ()=>{
+    
+    const {scrapeState,fireScrapeAction:dispatcher} = useDispatcherContext();
+    const {isQueueRunning} = scrapeState;
+
+    const setUserRequest = ()=>{
         const request = getFormValue();
         if(request != undefined){
-            props.onAction({
-                type: "queue-request-add",
-                payload: request,
-            });
+            dispatcher({type:ScrapeActionType.ActionAddScrape, payload:request});
         }
     };
-    const startQueue = ()=>{
-        if(!props.isRunning){
-            props.onAction({type: "toggle-run-queue"});
+    const setUserStartQueue = ()=>{
+        if(!isQueueRunning){
+            dispatcher({type:ScrapeActionType.ActionRunQueue});
         }
     };
+    const enterHandler = onEnterHandler(setUserRequest);
+
     return (
         <div className={['tile is-ancestor', props.className ].join(" ")}>
 
@@ -50,14 +53,16 @@ const ScrapeControlForm = (props:ScrapeControlProps)=>{
                 <div className={['tile is-parent is-vertical is-3'].join(" ")}>
                     <div className={['is-child control has-icons-right' ].join(" ")} >
                         <input ref={requestKeywords} placeholder='Job Post Keywords' 
-                            className={["input"].join(" ")} type="text" onFocus={inputFocusSelectAll} />
+                            className={["input"].join(" ")} type="text" 
+                            onFocus={inputFocusSelectAll} onKeyDown={enterHandler}/>
                         <span className={["icon is-small is-right"].join(" ")}>
                             <FontAwesomeIcon icon={faSearch}/>
                         </span>
                     </div>
                     <div className={['is-child control has-icons-right'].join(" ")} title='Location (Optional)'>
                         <input ref={requestLocation} placeholder='Job Location' 
-                            className={["input"].join(" ")} type="text" onFocus={inputFocusSelectAll} />
+                            className={["input"].join(" ")} type="text" 
+                            onFocus={inputFocusSelectAll} onKeyDown={enterHandler} />
                         <span className={["icon is-small is-right"].join(" ")}>
                             <FontAwesomeIcon icon={faMapLocationDot}/>
                         </span>
@@ -66,7 +71,7 @@ const ScrapeControlForm = (props:ScrapeControlProps)=>{
 
                 <div className={['tile is-parent is-vertical is-1',styles['no-flex-grow']].join(" ")} >
                     <div className={['is-child control'].join(" ")} >
-                        <button onClick={queueRequest} className={['button is-info is-fullwidth'].join(" ")}>
+                        <button onClick={setUserRequest} className={['button is-info is-fullwidth'].join(" ")}>
                             Queue
                         </button>
                     </div>
@@ -81,7 +86,7 @@ const ScrapeControlForm = (props:ScrapeControlProps)=>{
 
                 <div className={['tile is-parent is-vertical is-1'].join(" ")} >
                     <div className={['is-child control'].join(" ")} style={{height:"100%"}}>
-                        <button onClick={startQueue} className={['button is-primary is-fullwidth'].join(" ")} style={{height:"100%",wordWrap:"break-word"}}>
+                        <button onClick={setUserStartQueue} className={['button is-primary is-fullwidth'].join(" ")} style={{height:"100%",wordWrap:"break-word"}}>
                             Start Queue
                         </button>
                     </div>

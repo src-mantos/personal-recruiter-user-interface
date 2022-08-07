@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes, useImperativeHandle, useMemo, useCallback } from 'react';
-import styles from '../../styles/ToolTip.module.scss';
-import { useToolTipContext } from './_utils/ToolTipContext';
+import styles from '../../../styles/ToolTip.module.scss';
+import { useToolTipContext } from '../_utils/ToolTipContext';
 
 export interface ToolTipMessageProps{
     title?:string;

@@ -6,13 +6,12 @@ import { IPostDataScrapeRequest } from 'data-service/types';
 import ScrapeRequest from 'data-service/entity/ScrapeRequest';
 import { faSearch, faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ScrapeAction } from '../ScrapeManagementComponent';
+import {ScrapeAction, ScrapeActionType} from '../../_utils/_dispatchers/ScrapeDispatcher';
+import useDispatcherContext from '../../_utils/DispatcherContext';
 
 
 export interface TileChannelProps extends StylableComponent {
-    queueData?: IPostDataScrapeRequest[];
-    dispatcher?:React.Dispatch<ScrapeAction>;
-    isRunning:boolean;
+    
 }
 interface Removable{
     // index:number;
@@ -26,16 +25,15 @@ const Tile = (props:IPostDataScrapeRequest & StylableComponent & Removable) => {
     const removeAction= ()=>{
         console.log("removeAction Fire",props)
         if(props.dispatcher != undefined){
+            console.log("trying to remove ",props);
             props.dispatcher({
-                type: "queue-request-remove",
+                type: ScrapeActionType.ActionRemoveScrape,
                 payload: props.uuid,
             });
         }
     };
     const displayLocation = (props.location == undefined||props.location == null)? "\"Anywhere\"":props.location;
-    // const displayLocation = (props.location == undefined||props.location == null)? ()=>{return(
-    //     <span title="this will be based on you're network geo-locaiton by the underlying Organizations">&quot;Anywhere&quot;</span>
-    // );}:props.location;
+
     return (
         <div className={["box tile is-parent is-vertical", styles["rq-tile"], props.className].join(" ")}
             style={{position:"relative"}}>
@@ -61,23 +59,9 @@ const Tile = (props:IPostDataScrapeRequest & StylableComponent & Removable) => {
 "keyword":"Full Stack Engineer",
 "_id":"62e58837f6127556e444a88b"}
  */
-const requestActiveStats = (setActiveState:React.Dispatch<any>)=>{
-    return async ()=>{
-        const resp = await fetch("/api/data/scrape/active");
-        if(resp.status == 200){
-            const data = await resp.json();
-            setActiveState(data);
-            console.log("requestActiveStats", data);
-        }
-    };
-};
+
 const StatusTile = (props:any) => {
     const [activeState, setActiveState] = useState<ScrapeRequest>();
-    useEffect(()=>{
-        requestActiveStats(setActiveState);
-        const polling = setInterval(requestActiveStats(setActiveState), 90*1000);
-        return ()=>{clearInterval(polling);};
-    },[]);
 
     const statistics = (activeState == undefined)? []:activeState?.metrics;
     let [total, completed] = [0,0];
@@ -103,20 +87,23 @@ const StatusTile = (props:any) => {
 };
 
 const RequestQueue = (props:TileChannelProps) => {
-    let {className, queueData, dispatcher, isRunning} = props;
-    if(queueData == undefined) queueData = [];
+    const {scrapeState,fireScrapeAction:dispatcher} = useDispatcherContext();
+    const {queueData,isQueueRunning} = scrapeState;
+    
+    let localData:IPostDataScrapeRequest[] = [];
+    if(queueData != undefined) localData = queueData;
     
 
     return (
-        <div className={["tile is-ancestor", className, styles["tile-channel"] ].join(" ")} >
+        <div className={["tile is-ancestor", props.className, styles["tile-channel"] ].join(" ")} >
             <div className={["tile", styles["rq-tile-container"] ].join(" ")} >
                 
                 <div className={["tile is-parent is-flex-grow-0", styles["rq-tile-wrapper"]].join(" ")}>
                     <StatusTile className={styles["rq-tile-bk-status"]} />
                 </div>
                 
-                {queueData.map((tile, index) => {
-                    const isRemovable = (isRunning)? index != 0 : true;
+                {localData.map((tile, index) => {
+                    const isRemovable = (isQueueRunning)? index != 0 : true;
                     return (
                         <div key={tile.uuid} className={["tile is-parent is-flex-grow-0", styles["rq-tile-wrapper"]].join(" ")}>
                             <Tile {...tile} removable={isRemovable} dispatcher={dispatcher}

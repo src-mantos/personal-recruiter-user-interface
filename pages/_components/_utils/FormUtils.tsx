@@ -46,3 +46,34 @@ export function domValueGetter<T>(el:React.RefObject<HTMLInputElement>, defaultV
     }
     return defaultValue;
 };
+
+
+export const urlBuilder = (baseURI: string) => {
+    const uri = baseURI;
+    const params: { param: string; value: string }[] = [];
+    const addGetParam = (param: string, value: string) => {
+        params.push({ param, value });
+    };
+    const generateParams = () => {
+        return params.map((value, _index, _all) => {
+            const { param, value: val } = value;
+            return encodeURIComponent(param) + '=' + encodeURIComponent(val);
+        });
+    };
+    const toString = () => {
+        const paramArray = generateParams();
+        if (paramArray.length > 0) {
+            return uri + '?' + paramArray.join('&');
+        }
+        return uri;
+    };
+    return { getURL: toString, addGetParam };
+};
+
+export const onEnterHandler = (action:{():void}):{(event: React.KeyboardEvent):void} =>{
+    return (event: React.KeyboardEvent) => {
+        if(event.key === 'Enter'){
+            action();
+        }
+    };
+};

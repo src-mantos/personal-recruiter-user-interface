@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ToolTipMessageProps, ToolTipLocationProps } from '../ToolTip';
+import { ToolTipMessageProps, ToolTipLocationProps } from '../_panels/ToolTip';
 
 let ToolTipContext: React.Context<any>;
 let msgData: ToolTipMessageProps;
