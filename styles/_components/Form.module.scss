@@ -1,0 +1,12 @@
+@import './colors.scss';
+
+
+.pad-children > * {
+    margin: 0px 3px;
+}
+.pad-children > *:first-child {
+    margin-left: 0px;
+}
+.pad-children > *:last-child {
+    margin-right: 0px;
+}

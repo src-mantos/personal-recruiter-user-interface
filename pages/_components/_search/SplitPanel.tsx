@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons';
 import { StylableComponent } from '../types';
 import EditorPanel from '../_editor/EditorPanel';
-import ResultPanel from './_table/ResultPanel';
+import PostResultPanel from './_table/PostResultPanel';
 
 const SplitPanel = (props:StylableComponent)=>{
     const wrapper = useRef<HTMLDivElement>(null);
@@ -55,13 +55,14 @@ const SplitPanel = (props:StylableComponent)=>{
         <div ref={wrapper} className={['tile is-parent', props.className ].join(" ")}>
 
             <div ref={lhs} className={['tile is-parent',lhsClassname].join(" ")} style={{padding:"0px"}}>
-                <ResultPanel layoutWidth={width.lhs}></ResultPanel>
-                <div ref={handle} draggable className={['tile is-child is-align-self-center'].join(" ")} onDragStart={onDragStart} onDragEnd={onDragStop} >
-                    <FontAwesomeIcon icon={faGripVertical}></FontAwesomeIcon>
-                </div>
+                <PostResultPanel layoutWidth={width.lhs}></PostResultPanel>
+               
             </div>
 
-            
+            <div ref={handle} style={{width:"20px"}} draggable className={['tile is-child is-align-self-center'].join(" ")} 
+                onDragStart={onDragStart} onDragEnd={onDragStop} onMouseMove={onDragMove} >
+                <FontAwesomeIcon icon={faGripVertical}></FontAwesomeIcon>
+            </div>
 
             <div ref={rhs} className={['tile is-parent',rhsClassname].join(" ")} >
                 <EditorPanel></EditorPanel>

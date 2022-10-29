@@ -7,22 +7,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { StylableComponent } from '../types';
 
 import useDispatcherContext from '../_utils/DispatcherContext';
-import ResultPanel from './_table/ResultPanel';
+import ResultPanel from './_table/PostResultPanel';
 import EditorPanel from '../_editor/EditorPanel';
 import SplitPanel from './SplitPanel';
 import PostSearchForm from './_form/PostSearchForm';
-import SearchEffects from '../_utils/_dispatchers/SearchEffects';
+
 
 
 
 const SearchManagementComponent = (props:StylableComponent) => {
-    const {searchState,fireSearchAction:dispatcher} = useDispatcherContext();
 
     return (
         <div className={['tile is-ancestor is-vertical', props.className ].join(" ")}>
-            <SearchEffects></SearchEffects>
-            <PostSearchForm></PostSearchForm>
-            <SplitPanel></SplitPanel>
+            <div className={['tile is-parent'].join(" ")}>
+                <PostSearchForm></PostSearchForm>
+            </div>
+            <div className={['tile is-parent'].join(" ")}>
+                <SplitPanel></SplitPanel>
+            </div>
         </div>
     );
 };

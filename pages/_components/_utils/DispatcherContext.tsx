@@ -7,7 +7,7 @@ import ScrapeReducer, {
     ScrapeState,
     getInitialScrapeState,
 } from './_dispatchers/ScrapeDispatcher';
-import SearchReducer, { getInitialSearchState, SearchAction, SearchState } from './_dispatchers/SearchDispatcher';
+
 
 
 export interface Action<T> {
@@ -18,16 +18,16 @@ export interface Action<T> {
 export interface DispatcherContextDef {
     scrapeState: ScrapeState;
     fireScrapeAction: React.Dispatch<ScrapeAction>;
-    searchState: SearchState;
-    fireSearchAction: React.Dispatch<SearchAction>;
+    // searchState: SearchState;
+    // fireSearchAction: React.Dispatch<SearchAction>;
 }
 
 const initialContextDef = ():DispatcherContextDef=>{
     return {
         scrapeState: getInitialScrapeState(),
         fireScrapeAction: ()=>{},
-        searchState: getInitialSearchState(),
-        fireSearchAction:()=>{},
+        // searchState: getInitialSearchState(),
+        // fireSearchAction:()=>{},
     };
 };
 
@@ -40,14 +40,14 @@ export default useDispatcherContext;
 
 export const DispatchContextProvider = (props:any) => {
     const [scrapeState, fireScrapeAction] = useReducer(ScrapeReducer, getInitialScrapeState());
-    const [searchState, fireSearchAction] = useReducer(SearchReducer,getInitialSearchState());
+    // const [searchState, fireSearchAction] = useReducer(SearchReducer,getInitialSearchState());
 
     return (
         <DispatcherContext.Provider value={{
             scrapeState,
             fireScrapeAction,
-            searchState,
-            fireSearchAction,
+            // searchState,
+            // fireSearchAction,
         }}>
             {props.children}
         </DispatcherContext.Provider>
