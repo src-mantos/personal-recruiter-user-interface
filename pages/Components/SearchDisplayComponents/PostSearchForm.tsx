@@ -1,19 +1,17 @@
 import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes, useMemo, useCallback, useReducer } from 'react';
 
-import { IPostData, IPostDataSearchRequest } from 'data-service/types';
-import { onEnterHandler, urlBuilder } from '../../_utils/FormUtils';
+import { IPostData, ISearchQuery } from 'data-service/types';
+import { onEnterHandler, urlBuilder } from '../FormUtils';
 import { faBookmark, faAdd, faSearch, faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { StylableComponent } from '../../types';
-
-import useDispatcherContext from '../../_utils/DispatcherContext';
-
+import { StylableComponent } from '../types';
 
 import {SetterOrUpdater, useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
-import {searchRequestState, searchResultState, searchFilterState, FilterStateRecord, searchFilterSelector} from '../../_utils/_dispatchers/SearchContext';
+import {searchRequestState, searchResultState, searchFilterState, FilterStateRecord, searchFilterSelector} from '../contexts/SearchContext';
 
-import { columns } from '../_table/PostResultPanel';
-import styles from '../../../../styles/_components/Form.module.scss';
+import { columns } from './PostResultPanel';
+///pages/Components/SearchDisplayComponents/PostSearchForm.tsx
+import styles from '../../../styles/Components/Form.module.scss';
 
 export interface FilterColumns {
     key : string;
@@ -35,7 +33,7 @@ const PostSearchForm = (props:StylableComponent) => {
     const keywords = useRef<HTMLInputElement>(null);
     const SearchPosts:{():void} = () => {
         if(keywords.current && keywords.current.value != ""){
-            const req:IPostDataSearchRequest = {
+            const req:ISearchQuery = {
                 keywords: keywords.current.value
             };
             if( searchQuery?.keywords != req.keywords){

@@ -1,0 +1,113 @@
+@import './colors.scss';
+
+$rgb: 180;
+$rgb2: 220;
+
+.pad-children > * {
+    margin: 0px 3px;
+}
+.pad-children > *:first-child {
+    margin-left: 0px;
+}
+.pad-children > *:last-child {
+    margin-right: 0px;
+}
+
+.no-pad {
+    padding: 0;
+}
+.no-margin {
+    margin: 0;
+}
+.no-wrap{
+    white-space: nowrap;
+}
+
+
+.scrape-background{
+    background: linear-gradient(to right, rgba($rgb,$rgb,$rgb,1) 0%, rgba($rgb2,$rgb2,$rgb2,1) 2%, rgba($rgb2,$rgb2,$rgb2,1) 98%, rgba($rgb,$rgb,$rgb,1) 100%);
+    box-shadow: 1px 1px 5px;
+    overflow: hidden;
+}
+
+.scrape-column-height > *{
+    padding-top: 0px;
+}
+
+.scrape-tile {
+    font-size: .8em;
+    font-family: $font-secondary;
+    position:"relative";
+    padding: 10px;
+}
+.scrape-tile-keyword {
+    font-family: $font-primary;
+    font-size: 1.1em;
+    letter-spacing: -.5px;
+}
+
+.app-border{
+    border-left: 1px solid $border;
+    border-right: 1px solid $border;
+    background: linear-gradient(to right, rgba($rgb2,$rgb2,$rgb2,1) 0%, $latte 2%, $latte 98%, rgba($rgb2,$rgb2,$rgb2,1) 100%);
+}
+.app-border-break{
+    margin-top: -.3rem !important;
+}
+.app-border-top{
+    border-top: 1px solid $border;
+    border-bottom: 1px solid $border;
+    border-radius: 5px;
+}
+
+
+
+.ssf-form-wrapper-height{
+	max-height: 0;
+}
+.ssf-form-margin{
+    width:30%;
+}
+.no-flex-grow{
+    flex-grow: 0;
+}
+.ssf-btn-width{
+    width: 180px;
+}
+.sf-button{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    // color:whitesmoke;
+    // background-color: $green-dark;//$tile-border-color;
+    // border-color: $green-light;//$SpaceGreen;
+}
+
+.ssf-anim-wrapper{
+    padding: 0px !important;
+}
+
+// .ssf-anim-slide{
+//     --xyz-duration: 1s;
+//     --xyz-origin: "bottom"
+// }
+
+.ssf-slide-close{
+    --xyz-scale-y: 0%;
+    --xyz-translate-y: 50%;
+}
+
+.ssf-slide-widgets{
+    --xyz-scale-y: 100%;
+    --xyz-translate-y: 100%;
+}
+
+.ssfh-border{
+    border: 1px solid $independence;
+    border-top: none;
+}
+
+.ssfh-expand-border{
+    
+}

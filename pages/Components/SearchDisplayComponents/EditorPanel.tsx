@@ -3,7 +3,7 @@ import styles from '../../../styles/EditorPanel.module.scss';
 import { IPostData } from 'data-service/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
-import { formatLocaleDateString, truncEllipsis } from '../_utils/FormUtils';
+import { formatLocaleDateString, truncEllipsis } from '../../Components/FormUtils';
 
 
 interface AnyMap { [key: string]: any }
@@ -72,9 +72,9 @@ const EditorPanel = (props:EditorPanelProps) => {
             organization: (organization.current)? organization.current.value:post.organization,
             location: (location.current)? location.current.value:post.location,
             description: (description.current)? description.current.value:post.description,
-            salary: (salary.current)? salary.current.value:post.salary,
+            salary: (salary.current)? salary.current.value:"",
             postedTime: post.postedTime,
-
+            userModified: true
         };
     };
 
@@ -121,7 +121,7 @@ const EditorPanel = (props:EditorPanelProps) => {
                     <label className={["label is-small"].join(" ")}>Salary Info</label>
                     <span className={["control"].join(" ")}>
                         <input className={["input is-static",styles.editorField,styles.indentField,styles.fieldSize].join(" ")} 
-                            readOnly={true} type="text" ref={salary} defaultValue={post.salary} 
+                            readOnly={true} type="text" ref={salary} /*defaultValue={post.salary}*/
                             onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}/>
                     </span>
                 </div>
@@ -129,7 +129,7 @@ const EditorPanel = (props:EditorPanelProps) => {
                     <label className={["label is-small", styles["ep-remove-marg"]].join(" ")}>Captured On</label>
                     <span className={["control"].join(" ")}>
                         <input className={["input is-static",styles.editorField,styles.indentField,styles.fieldSize].join(" ")} 
-                            readOnly={true} type="date" ref={captureTime} defaultValue={formatLocaleDateString(post.captureTime,{year: 'numeric', month: 'long', day: 'numeric'})} 
+                            readOnly={true} type="date" ref={captureTime} /*defaultValue={formatLocaleDateString(post.captureTime,{year: 'numeric', month: 'long', day: 'numeric'})}*/ 
                             onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}/>
                     </span>
                 </div>

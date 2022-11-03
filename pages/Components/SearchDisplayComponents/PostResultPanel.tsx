@@ -1,20 +1,12 @@
 /* eslint-disable indent */
-import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes, ChangeEvent, ComponentType, PureComponent, Key } from 'react';
+import React, { useState, useEffect, Key } from 'react';
 
-import styles from '../../../../styles/_components/_search/PostResultPanel.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { IPostData } from 'data-service/types';
-import { matchSorter } from 'match-sorter';
 
-import GetPostTableConfig from './GetPostTableConfig';
-import { StylableComponent } from '../../types';
-import useDispatcherContext from '../../_utils/DispatcherContext';
 // import { useReactTable, getCoreRowModel, flexRender, Row, Cell, ColumnDef } from '@tanstack/react-table';
 import { useRecoilValueLoadable, useRecoilValue } from 'recoil';
-import { searchRequestState, searchResultState } from '../../_utils/_dispatchers/SearchContext';
+import { searchRequestState, searchResultState } from '../contexts/SearchContext';
 // import { FixedSizeList, FixedSizeListProps, ListChildComponentProps, FixedSizeGrid, FixedSizeGridProps, GridChildComponentProps} from 'react-window';
-import { truncEllipsis } from '../../_utils/FormUtils';
 import DataGrid, { Column, HeaderRendererProps, RowRendererProps, useFocusRef } from 'react-data-grid';
 
 
@@ -47,7 +39,8 @@ function FilterRenderer<R, SR, T extends HTMLOrSVGElement>({
         organization: '',
         location: '',
         description: '',
-        postedTime: ''
+        postedTime: '',
+        userModified: false
     };
   return (
     <>
@@ -118,11 +111,11 @@ const PostResultPanel = (props:any) => {
     //     children: RowRenderer,
     // });
     
-    useEffect(()=>{
-        if(userRequest != undefined && loadableData.state == 'hasValue' && loadableData.contents != undefined){
-            setDataset( loadableData.contents );
-        }
-    },[userRequest,loadableData]);
+    // useEffect(()=>{
+    //     if(userRequest != undefined && loadableData.state == 'hasValue' && loadableData.contents != undefined){
+    //         setDataset( loadableData.contents );
+    //     }
+    // },[userRequest,loadableData]);
     
     const tableProps:any = {
         height: 600, 

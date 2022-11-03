@@ -9,8 +9,8 @@ const nextConfig = {
     rewrites: async () => {
         return [
             {
-                source: '/api/data/:path*',
-                destination: 'http://localhost:3000/:path*', // Proxy to Backend
+                source: '/dataservice/:path*',
+                destination: 'http://localhost:3000/v1/:path*', // Proxy to Backend
             },
         ];
     },

@@ -1,7 +1,6 @@
-/* eslint-disable indent */
 import { atom, selector, selectorFamily } from 'recoil';
-import { IPostDataSearchRequest, IPostData } from 'data-service/types';
-import { FilterColumns, getFilterColumns } from '../../_search/_form/PostSearchForm'
+import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
+import { FilterColumns, getFilterColumns } from '../SearchDisplayComponents/PostSearchForm';
 
 const ErrorHandler = async (resp: Response): Promise<any> => {
     console.error(resp);
@@ -15,7 +14,7 @@ export enum SearchAtomKeys {
 
 
 
-export const searchRequestState = atom<IPostDataSearchRequest | undefined>({
+export const searchRequestState = atom<ISearchQuery | undefined>({
     key: SearchAtomKeys.SearchRequest,
     default: undefined,
     effects: [

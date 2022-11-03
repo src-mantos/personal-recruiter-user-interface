@@ -77,3 +77,18 @@ export const onEnterHandler = (action:{():void}):{(event: React.KeyboardEvent):v
         }
     };
 };
+export const onTabHandler = (action:{():void}):{(event: React.KeyboardEvent):void} =>{
+    return (event: React.KeyboardEvent) => {
+        if(event.key === 'Tab'){
+            action();
+        }
+    };
+};
+
+export const onKeyPress = (keys:string[], action:{():void}):{(event: React.KeyboardEvent):void} =>{
+    return (event: React.KeyboardEvent) => {
+        if(keys.indexOf(event.key) !== -1){
+            action();
+        }
+    };
+};
