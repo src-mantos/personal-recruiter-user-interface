@@ -1,6 +1,6 @@
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
-import { FilterColumns, getFilterColumns } from '../SearchDisplayComponents/PostSearchForm';
+import { FilterColumns } from '../SearchComponents/KeywordSearchForm';
 
 const ErrorHandler = async (resp: Response): Promise<any> => {
     console.error(resp);
@@ -10,37 +10,38 @@ export enum SearchAtomKeys {
     SearchRequest = 'SearchRequest',
     SearchResult = 'SearchResult',
     SearchFilters = 'SearchFilters',
+    DataSet = 'DataSet',
 } 
 
+export interface SearchQuery extends Partial<ISearchQuery> {
+    sendRequest: boolean;
+    dataset?: IPostData[];
+};
 
 
-export const searchRequestState = atom<ISearchQuery | undefined>({
+export const searchRequestState = atom<SearchQuery>({
     key: SearchAtomKeys.SearchRequest,
-    default: undefined,
+    default: { sendRequest:false },
     effects: [
-        ({ onSet }) => {
+        ({ onSet, setSelf, getLoadable }) => {
             onSet((newReq) => {
-                console.debug("updated User Search Req",newReq);
+                const makeRequest = async () =>{
+                    const resp: Response = await fetch('/dataservice/data/search/?keywords=' + newReq.keywords);
+                    const tmp = await resp.json() as unknown as IPostData[];
+                    setSelf({ ...newReq, dataset:tmp, sendRequest:false  });
+                    console.log("updated");
+                }
+                if(newReq.sendRequest){
+                    setSelf({ ...newReq, sendRequest:false });
+                    makeRequest();
+                    console.log("requested");
+                }
             });
         },
     ],
 });
 
-export const searchResultState = selector<IPostData[] | undefined>({
-    key: SearchAtomKeys.SearchResult,
-    get: async ({ get }) => {
-        const userRequest = get(searchRequestState);
-        if (userRequest != undefined) {
-            const resp: Response = await fetch('/api/data/search?keywords=' + userRequest.keywords);
-            if (resp.status == 200) {
-                const data: IPostData[] = await resp.json();
-                return data;
-            } else {
-                ErrorHandler(resp);
-            }
-        }
-    },
-});
+
 
 export type FilterStateRecord = FilterColumns & { value: any };
 export const searchFilterState = atom<FilterStateRecord[]>({
