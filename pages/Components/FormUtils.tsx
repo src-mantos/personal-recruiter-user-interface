@@ -70,10 +70,10 @@ export const urlBuilder = (baseURI: string) => {
     return { getURL: toString, addGetParam };
 };
 
-export const onEnterHandler = (action:{():void}):{(event: React.KeyboardEvent):void} =>{
+export const onEnterHandler = (action:{(event: React.KeyboardEvent):void}|{():void}):{(event: React.KeyboardEvent):void} =>{
     return (event: React.KeyboardEvent) => {
         if(event.key === 'Enter'){
-            action();
+            action(event);
         }
     };
 };

@@ -3,6 +3,7 @@
 $rgb: 180;
 $rgb2: 220;
 
+/** consider refactoring to common imported scss **/
 .pad-children > * {
     margin: 0px 3px;
 }
@@ -69,13 +70,54 @@ $rgb2: 220;
     padding:0px;
 }
 
+/** Result Set Componenet **/
+.vtable-viewport {
+    overflow: auto;
+    cursor: pointer;
+}
+.vtable-canvas {
+    
+    width: 100%;
+    position: relative;
+}
+.vtable-row {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.vtable-nopad > * {
+    padding: .1em 1em;
+}
+.vtable-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.vtable-subtitle {
+    font-weight: 700;
+}
+.post-tile {
+    cursor: pointer;
+    font-size: .9em;
+    background-color: rgb(235, 241, 241);
+    margin: 0;
+    border: 1px solid #ccc;
+}
+.post-tile:hover {
+    background-color: rgb(242, 248, 248);
+}
+.post-tile.selected {
+    background-color: rgb(236, 255, 252);
+}
+.post-tile-header {
+    border-bottom: 1px solid;
+}
 
 
-
-
-
-
-
+/** deprecated **/
 .ssf-form-wrapper-height{
 	max-height: 0;
 }

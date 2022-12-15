@@ -10,6 +10,9 @@ import {  searchRequestState } from '../contexts/SearchContext';
 
 import styles from '../../../styles/Components/Form.module.scss';
 import { truncEllipsis } from '../FormUtils';
+import { postDataState } from '../contexts/EditorContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExternalLink } from '@fortawesome/free-solid-svg-icons';
 
 
 const TitleColumn = {
@@ -81,85 +84,97 @@ export const columns = [
 ];
 
 
-const PostResultPanel = (props:any & {dataset?:IPostData[]} ) => {
+const PostResultPanel = (props:{height:number}) => {
     const requestAtom = useRecoilValue(searchRequestState);
     const parentRef = React.useRef<HTMLDivElement>();
+    const [activePostData, setActivePost] = useRecoilState(postDataState);
+    const [selectIndex, setSelected] = useState(-1);
 
     // The virtualizer
     const rowVirtualizer = useVirtualizer({
         count: (requestAtom.dataset === undefined)? 1: requestAtom.dataset.length,
         getScrollElement: () => (parentRef.current === undefined)? null : parentRef.current,
-        estimateSize: () => 35,
+        estimateSize: () => 80,
     });
 
     if(requestAtom.dataset === undefined){
         return (
             <div>
-                <div className={['columns is-centered'].join(" ")}>
-                    <div className={['column'].join(" ")}>no data available</div>
+                <div className={['columns is-centered', 'card', styles['post-tile']].join(" ")}>
+                    <div className={['column'].join(" ")}
+                        style={{ textAlign:'center' }}>
+                            no data available
+                    </div>
                 </div>
             </div>
         );
     }else{
         const viewData:IPostData[] = requestAtom.dataset; //enforce datatype
+        const clickRow = (index:number)=> {
+            return (event:React.MouseEvent) => {
+                if(selectIndex == index){
+                    setSelected(-1);
+                    setActivePost({
+                        origState: undefined
+                    });
+                }else{
+                    setSelected(index);
+                    setActivePost({
+                        origState: viewData[index]
+                    });
+                }
+            };
+        };
+        
         return (
-            <div>
-                <table className='table is-bordered is-striped is-narrow is-hoverable is-fullwidth'>
-                    <thead>
-                        <tr>
-                            {columns.map((col)=>(
-                                <td>{col.name}</td>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colSpan={6}> nodata </td>
-                        </tr>
-                        <tr>
-                            <td colSpan={6}> nodata </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div
-                    ref={parentRef}
-                    style={{
-                        height: `400px`,
-                        overflow: 'auto', // Make it scroll!
-                    }}
+            <div ref={parentRef} className={[styles["vtable-viewport"]].join(" ")} style={{height:props.height}}>
+                <div className={[styles["vtable-canvas"]].join(" ")}
+                    style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
                 >
-                    <div
-                        style={{
-                            height: `${rowVirtualizer.getTotalSize()}px`,
-                            width: '100%',
-                            position: 'relative',
-                        }}
-                    >
                         
-                        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                            const row = viewData[virtualItem.index] as any;
-                            return (
-                                <div className={['columns'].join(" ")}
-                                    key={virtualItem.key}
-                                    style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: `${virtualItem.size}px`,
-                                        transform: `translateY(${virtualItem.start}px)`,
-                                    }}>
+                    {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                        const row = viewData[virtualItem.index] as any;
+                        const captureTime:Date = new Date(row["captureTime"]);
+                        return (
+                            <div className={[styles['vtable-row']].join(" ")}
+                                key={virtualItem.key}
+                                style={{
+                                    height: `${virtualItem.size}px`,
+                                    transform: `translateY(${virtualItem.start+10}px)`,
+                                }}>
 
-                                    {columns.map((col)=>(
-                                        <div className={['column', col.className].join(" ")}>{(col.dataRenderer != undefined)? col.dataRenderer(row[col.key]) :row[col.key]}</div>
-                                    ))}
-                                    
+                                <div className={['card','columns',styles['post-tile'],(selectIndex == virtualItem.index)? styles['selected']:"" ].join(" ")} onClick={clickRow(virtualItem.index)}>
+                                    <div className={['column is-vertical'].join(" ")}>
+                                        <div className={['columns', styles['vtable-nopad'], styles['post-tile-header']].join(" ")}>
+                                            <div className={['column', styles['vtable-title']].join(" ")}>{row["title"]}</div>
+                                            <div className={['column is-narrow', styles['vtable-subtitle']].join(" ")}>{row["organization"]}</div>
+                                            {(row["organization"] != row["location"])?(
+                                                <div className={['column is-narrow', styles['vtable-subtitle']].join(" ")}>{row["location"]}</div>
+                                            ):""}
+                                            <div className={['column is-narrow'].join(" ")}
+                                                style={{ paddingLeft:0 }}
+                                                onClick={()=>{
+                                                    if(row["directURL"] !== undefined && row["directURL"] !== "")
+                                                        window.open(row["directURL"],"_blank");
+                                                }}>
+                                                <FontAwesomeIcon icon={faExternalLink} size={"1x"}/>
+                                            </div>
+                                        </div>
+                                        <div className={['columns', styles['vtable-nopad']].join(" ")}>
+                                            <div className={['column'].join(" ")}>{truncEllipsis(row["description"], 144)}</div>
+                                            <div className={['column is-narrow is-vertical'].join(" ")}>
+                                                <div>{captureTime.toLocaleString()}</div>
+                                                <div>{truncEllipsis(row["salary"], 20)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                     
-                            );
-                        })}
+                            </div>
+                                    
+                        );
+                    })}
                         
-                    </div>
                 </div>
             </div>
         );

@@ -1,0 +1,57 @@
+@import './colors.scss';
+
+.no-pad {
+    padding: 0 !important;
+}
+.no-margin {
+    margin: 0;
+}
+.no-wrap{
+    white-space: nowrap;
+}
+
+
+.editor-panel{
+    position:relative;
+    border: 1px solid $independence;
+    background-color: $latte;
+}
+.field-label{
+    color: #939393;
+}
+.field-size{
+    width: calc(100% - 4em);
+}
+.field-indent{
+    margin-left: 1.5em;
+}
+.field-collapse{
+    margin-top: -1em;
+}
+
+.floating-control {
+    position: absolute;
+    right:5px;
+    top:5px;
+    z-index: 10;
+    cursor: pointer;
+}
+
+
+.ep-textArea{
+    height:calc(100% - 2em);
+}
+
+
+
+.fieldSize{
+    width: calc(100% - 4em);
+}
+
+.indentField{
+    margin-left: 3em;
+}
+
+.iconLabel{
+    text-align: center;
+}
