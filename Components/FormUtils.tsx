@@ -31,17 +31,17 @@ export function domValueGetter<T>(el:React.RefObject<HTMLInputElement>, defaultV
     if(hasValue){
         const value = el.current.value;
         switch (typeof defaultValue) {
-        case "number":
-            return parseInt(value) as unknown as T;
-        case "object":
-            if(defaultValue instanceof Date){
-                return new Date(value) as unknown as T;
-            }
-        case "symbol":
-        case "string":
-        case "undefined":
-        default:
-            return value as unknown as T;
+            case "number":
+                return parseInt(value) as unknown as T;
+            case "object":
+                if(defaultValue instanceof Date){
+                    return new Date(value) as unknown as T;
+                }
+            case "symbol":
+            case "string":
+            case "undefined":
+            default:
+                return value as unknown as T;
         }
     }
     return defaultValue;

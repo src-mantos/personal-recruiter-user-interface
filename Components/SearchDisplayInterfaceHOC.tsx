@@ -3,14 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditorPanel from "./SearchDisplayComponents/EditorPanel";
 import PostResultPanel from "./SearchDisplayComponents/PostResultPanel";
 import { StylableComponent } from "./types";
-import styles from '../../styles/Components/Form.module.scss';
+import styles from '../styles/Components/Form.module.scss';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { searchRequestState } from "./contexts/SearchContext";
 import useWindowDimensions from "./contexts/useWindowDimentions";
 import { CSSProperties } from "react";
+import { postDataState } from "./contexts/EditorContext";
 
 
 const SearchDisplayInterfaceHOC = (props:StylableComponent) => {
+    const activePostData = useRecoilValue(postDataState);
     const dimentions = useWindowDimensions();
     let wrapperStyle:CSSProperties = {};
     let childHeight = 0;
@@ -18,8 +20,9 @@ const SearchDisplayInterfaceHOC = (props:StylableComponent) => {
         const { width, height } = dimentions;
         const panelHeight = 180;
         wrapperStyle.height = height-panelHeight;
-        childHeight = wrapperStyle.height - (wrapperStyle.height*.01);
+        childHeight = wrapperStyle.height - (wrapperStyle.height*.05);
     }
+    const editorClass = (activePostData.origState == undefined)? "is-4":"is-8";
     
     return (
         <div className={['tile is-ancestor',  props.className ].join(" ")} style={wrapperStyle}>
@@ -29,7 +32,7 @@ const SearchDisplayInterfaceHOC = (props:StylableComponent) => {
                     <div className={['column'].join(" ")} style={{ paddingLeft:"0px" }}>
                         <PostResultPanel height={childHeight}></PostResultPanel>
                     </div>
-                    <div className={['column'].join(" ")}>
+                    <div className={['column', editorClass].join(" ")}>
                         <EditorPanel height={childHeight}></EditorPanel>
                     </div>
                 </div>

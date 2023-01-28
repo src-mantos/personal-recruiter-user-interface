@@ -1,7 +1,7 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { scrapeRequestState } from "../contexts/ScrapeContext";
-import styles from '../../../styles/Components/Form.module.scss';
+import styles from '../../styles/Components/Form.module.scss';
 import { inputFocusSelectAll, onKeyPress, onEnterHandler } from "../FormUtils";
 
 const AuxScrapeForm = () => {
@@ -11,8 +11,11 @@ const AuxScrapeForm = () => {
     const requestPageDepth = useRef<HTMLInputElement>(null);
     const setPageDepth = ()=>{
         if(requestPageDepth.current?.value !== undefined){
-            const pageDepth = parseInt(requestPageDepth.current.value);
-            setScrapeReuest({ ...request, pageDepth });
+            const numbers:string = requestPageDepth.current.value.replaceAll(/\D/g,'');
+            
+            const pageDepth = parseInt(numbers);
+            if(!isNaN(pageDepth))
+                setScrapeReuest({ ...request, pageDepth });
         }
     };
     const updateKeyListener = onKeyPress(['Tab','Enter'],setPageDepth);
@@ -37,11 +40,26 @@ const AuxScrapeForm = () => {
                 <input className={["input", styles["ssf-btn-width"] ].join(" ")}
                     ref={requestPageDepth} 
                     placeholder='Page Depth' 
-                    defaultValue={request.pageDepth}
-                    type="number"
+                    defaultValue={request.pageDepth+" Pages"}
+                    // type="number"
                     tabIndex={3}
-                    onFocus={inputFocusSelectAll} 
-                    onBlur={setPageDepth}
+                    onFocus={(event:React.FocusEvent<HTMLInputElement, Element>)=>{
+                        const val = event.target.value;
+                        event.target.value = val.replaceAll(/\D/g,'');
+                        event.target.select();
+                    }} 
+                    onBlur={(event:React.FocusEvent<HTMLInputElement, Element>)=>{
+                        const val = event.target.value;
+                        let p:number = parseInt(val.replaceAll(/\D/g,''));
+                        
+                        if(isNaN(p))
+                            p=1;
+                        let dv:string = ''+p;
+                        if(p>1){ dv+= " Pages"; }
+                        else { dv+= " Page"; }
+                        event.target.value = dv;
+                        setPageDepth();
+                    }}
                     onKeyDown={updateKeyListener}
                     style={{ padding:"0 0 0 10px" }}/>
             </div>

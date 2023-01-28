@@ -1,6 +1,6 @@
 import { atom, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
-import { FilterColumns } from '../SearchComponents/KeywordSearchForm';
+import { UserSearchFilter } from '../types';
 
 const ErrorHandler = async (resp: Response): Promise<any> => {
     console.error(resp);
@@ -23,14 +23,25 @@ export const searchRequestState = atom<SearchQuery>({
     key: SearchAtomKeys.SearchRequest,
     default: { sendRequest:false },
     effects: [
-        ({ onSet, setSelf, getLoadable }) => {
+        ({ onSet, setSelf, getPromise }) => {
             onSet((newReq) => {
                 const makeRequest = async () =>{
-                    const resp: Response = await fetch('/dataservice/data/search/?keywords=' + newReq.keywords);
+                    const payload:ISearchQuery = {
+                        keywords: (newReq.keywords===undefined)?"":newReq.keywords,
+                        filters:newReq.filters
+                    };
+                    const resp: Response = await fetch('/dataservice/data/search/', {
+                        method:"POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body:JSON.stringify(payload)
+                    });
                     const tmp = await resp.json() as unknown as IPostData[];
                     setSelf({ ...newReq, dataset:tmp, sendRequest:false  });
                     console.log("updated");
-                }
+                };
                 if(newReq.sendRequest){
                     setSelf({ ...newReq, sendRequest:false });
                     makeRequest();
@@ -43,8 +54,10 @@ export const searchRequestState = atom<SearchQuery>({
 
 
 
-export type FilterStateRecord = FilterColumns & { value: any };
-export const searchFilterState = atom<FilterStateRecord[]>({
+/**
+ * separate filter consolidation state
+ */
+export const searchFilterState = atom<UserSearchFilter[]>({
     key: SearchAtomKeys.SearchFilters,
     default: [],
 });
@@ -59,27 +72,49 @@ export const searchFilterSelector = selector({
     key: 'get' + SearchAtomKeys.SearchFilters,
     get:
         ({ get }) => {
-            const list: FilterStateRecord[] = get(searchFilterState);
+            const list: UserSearchFilter[] = get(searchFilterState);
             if(list == undefined){
                 return [];
             }
-            const mapping: Record<string,FilterStateRecord[]> = {};
+            const mapping: Record<string,UserSearchFilter[]> = {};
             
             list.forEach((filter) => {
                 console.log('step',mapping, filter);
-                if (mapping[filter.key] == undefined) {
-                    mapping[filter.key] = [];
+                if (mapping[filter.dataKey] == undefined) {
+                    mapping[filter.dataKey] = [];
                 }
-                mapping[filter.key].push(filter);
+                mapping[filter.dataKey].push(filter);
             });
 
-            const sub: FilterStateRecord[][] = [];
+            const sub: UserSearchFilter[][] = [];
             const keySet = Object.keys(mapping);
             for(let fKey of keySet){
                 sub.push(mapping[fKey]);
             }
             
             return sub;
+        },
+});
+
+const padWidth = 28;
+export const styleFilterSelector = selector({
+    key: 'style' + SearchAtomKeys.SearchFilters,
+    get:
+        ({ get }) => {
+            const sortedFilters: UserSearchFilter[][] = get(searchFilterSelector);
+            const columnWidths:number[] = [];
+            for(let i=0; i<sortedFilters.length; i++){
+                const row = sortedFilters[i];
+                for(let j=0; j<row.length; j++){
+                    const width = (padWidth + row[j].label.length + row[j].value.length)*3;
+                    if(isNaN(columnWidths[i])){
+                        columnWidths[i] = width;
+                    }else{
+                        columnWidths[i] = Math.max(columnWidths[i],width);
+                    }
+                }
+            }
+            return columnWidths;
         },
 });
 

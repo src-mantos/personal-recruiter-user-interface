@@ -40,6 +40,8 @@ $rgb2: 220;
 }
 
 .scrape-tile {
+    min-width: 150px;
+    
     font-size: .8em;
     font-family: $font-secondary;
     position:"relative";
@@ -50,6 +52,18 @@ $rgb2: 220;
     font-size: 1.1em;
     letter-spacing: -.5px;
 }
+
+
+// .start-queue-btn {
+//     max-width: 78px;
+//     transition-property: max-width;
+//     // transition-delay: .5s;
+//     transition-duration: .5s;
+// }
+// .start-queue-btn.running {
+//     max-width: 0px;
+// }
+
 
 .app-border{
     border-left: 1px solid $border;

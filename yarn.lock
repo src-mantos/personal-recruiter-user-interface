@@ -1539,7 +1539,7 @@ damerau-levenshtein@^1.0.7:
   resolved "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz"
   integrity sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==
 
-"data-service@file:../personal-recruiter-data-service/src":
+"data-service@file:../personal-recruiter-data-service/dist/src":
   version "0.0.0"
 
 data-urls@^3.0.1:

@@ -29,7 +29,8 @@ const PrimaryScrapeForm = () => {
                 <input className={["input"].join(" ")} 
                     ref={requestKeywords} 
                     type="text" 
-                    onFocus={inputFocusSelectAll} 
+                    // onChange={setKeywords}
+                    // onFocus={inputFocusSelectAll} 
                     onKeyDown={keywordKeyListner}
                     onBlur={setKeywords}
                     tabIndex={1}
@@ -43,6 +44,7 @@ const PrimaryScrapeForm = () => {
                     ref={requestLocation}
                     type="text" 
                     onFocus={inputFocusSelectAll} 
+                    // onChange={setLocation}
                     onKeyDown={locationKeyListner} 
                     onBlur={setLocation}
                     tabIndex={2}

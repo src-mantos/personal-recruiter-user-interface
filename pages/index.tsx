@@ -1,18 +1,21 @@
 import type { NextPage } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { RecoilRoot } from "recoil";
 
-import AppHeader from './Components/AppHeader';
-import { IPostData } from 'data-service/types';
-import ScrapeInterfaceHOC from './Components/ScrapeInterfaceHOC';
-import SearchInterfaceHOC from './Components/SearchInterfaceHOC';
-import SearchDisplayInterfaceHOC from './Components/SearchDisplayInterfaceHOC';
+import AppHeader from '../Components/AppHeader';
+import ScrapeInterfaceHOC from '../Components/ScrapeInterfaceHOC';
+import SearchInterfaceHOC from '../Components/SearchInterfaceHOC';
+import SearchDisplayInterfaceHOC from '../Components/SearchDisplayInterfaceHOC';
+
+export const getServerSideProps: GetServerSideProps<{ msg: string }> = async (context) => {
+    return {
+        props: { msg: 'tricking next into not static-ly rendering this page for production' },
+    };
+};
 
 const Home: NextPage = () => {
-    const [contextData, setContextData] = useState({ msgData:{}, locData:{}});
-    
-
     
     return (
         <RecoilRoot>

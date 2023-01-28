@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start -p 8080",
         "lint": "next lint",
-        "test": "jest --watch"
+        "test": "jest --watch",
+        "lint-fix": "next lint --fix --quiet"
     },
     "dependencies": {
         "@animxyz/core": "^0.6.6",
@@ -17,7 +18,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
         "@fortawesome/react-fontawesome": "^0.1.18",
         "@tanstack/react-virtual": "^3.0.0-beta.30",
-        "data-service": "file:../personal-recruiter-data-service/src",
+        "data-service": "file:../personal-recruiter-data-service/dist/src",
         "match-sorter": "^6.3.1",
         "next": "12.1.6",
         "react": "18.0.0",

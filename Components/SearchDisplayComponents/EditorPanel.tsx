@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes } from 'react';
-import styles from '../../../styles/Components/EditorPanel.module.scss';
+import styles from '../../styles/Components/EditorPanel.module.scss';
 import { IPostData } from 'data-service/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faFloppyDisk, faExternalLink, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { formatLocaleDateString, onEnterHandler, truncEllipsis } from '../../Components/FormUtils';
+import { formatLocaleDateString, onEnterHandler, truncEllipsis } from '../FormUtils';
 import { useRecoilState } from 'recoil';
 import { postDataState } from '../contexts/EditorContext';
 
@@ -93,12 +93,16 @@ const EditorPanel = (props:{height:number}) => {
             <span className={["is-child",styles.iconLabel].join(" ")}>{text}</span>
         </div>
     );
+    const heightStyle = (props.height > 100)? { height:props.height } : {};
     return (
-        <div className={["tile is-ancestor is-vertical box", styles["editor-panel"]].join(" ")} style={{height:props.height}}>
+        <div className={["tile is-ancestor is-vertical box", styles["editor-panel"]].join(" ")} style={heightStyle}>
 
             <div className={["is-parent box", styles["floating-control"],styles['no-pad']].join(" ")}>
                 <div className={["tile box is-parent is-vertical"].join(" ")} style={{ padding:"10px" }}>
-                    {generateControl(faFloppyDisk, "save")}
+                    {generateControl(faFloppyDisk, "save", ()=>{
+                        const updated = getModifiedPost();
+                        console.log("Save through atom", updated);
+                    })}
                     {generateControl(faExternalLink, "link", ()=>{
                         if(post.directURL !== undefined && post.directURL !== "")
                             window.open(post.directURL,"_blank");

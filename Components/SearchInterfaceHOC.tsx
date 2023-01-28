@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import { useRecoilState } from "recoil";
 import { onEnterHandler } from "./FormUtils";
-import { searchRequestState, searchFilterState } from "./contexts/SearchContext";
+import { searchRequestState } from "./contexts/SearchContext";
 import { StylableComponent } from "./types";
-import styles from '../../styles/Components/Form.module.scss';
+import styles from '../styles/Components/Form.module.scss';
 import { IPostData, IPostMetaData, ISearchQuery, ISearchFilter, IVendorMetadata, IPostDataIndex } from 'data-service/types';
 import KeywordSearchForm from "./SearchComponents/KeywordSearchForm";
+import FilterDisplay from "./SearchComponents/FilterDisplay";
 
 
 const SearchInterfaceHOC = (props:StylableComponent) => {
@@ -23,11 +24,7 @@ const SearchInterfaceHOC = (props:StylableComponent) => {
 
                     <KeywordSearchForm></KeywordSearchForm>
 
-                    <div className={['column control'].join(" ")}>
-                        <span className={['tag'].join(" ")}>
-                            location : Remote
-                        </span>
-                    </div>
+                    <FilterDisplay></FilterDisplay>
                 </div>
             </div>
         </div>

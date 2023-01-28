@@ -8,7 +8,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRecoilValueLoadable, useRecoilValue, useRecoilState, useRecoilStateLoadable } from 'recoil';
 import {  searchRequestState } from '../contexts/SearchContext';
 
-import styles from '../../../styles/Components/Form.module.scss';
+import styles from '../../styles/Components/Form.module.scss';
 import { truncEllipsis } from '../FormUtils';
 import { postDataState } from '../contexts/EditorContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -86,7 +86,7 @@ export const columns = [
 
 const PostResultPanel = (props:{height:number}) => {
     const requestAtom = useRecoilValue(searchRequestState);
-    const parentRef = React.useRef<HTMLDivElement>();
+    const parentRef = React.useRef<HTMLDivElement>(null);
     const [activePostData, setActivePost] = useRecoilState(postDataState);
     const [selectIndex, setSelected] = useState(-1);
 
@@ -127,7 +127,7 @@ const PostResultPanel = (props:{height:number}) => {
         };
         
         return (
-            <div ref={parentRef} className={[styles["vtable-viewport"]].join(" ")} style={{height:props.height}}>
+            <div ref={parentRef} className={[styles["vtable-viewport"]].join(" ")} style={{ height:props.height }}>
                 <div className={[styles["vtable-canvas"]].join(" ")}
                     style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
                 >
