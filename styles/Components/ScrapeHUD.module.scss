@@ -1,0 +1,28 @@
+@import './colors.scss';
+
+$rgb: 180;
+$rgb2: 220;
+
+.scrape-background{
+    background: linear-gradient(to right, rgba($rgb,$rgb,$rgb,1) 0%, rgba($rgb2,$rgb2,$rgb2,1) 2%, rgba($rgb2,$rgb2,$rgb2,1) 98%, rgba($rgb,$rgb,$rgb,1) 100%);
+    box-shadow: 1px 1px 5px;
+    overflow: hidden;
+}
+
+.scrape-column-height > *{
+    padding-top: 0px;
+}
+
+.scrape-tile {
+    min-width: 150px;
+    
+    font-size: .8em;
+    font-family: $font-secondary;
+    position:"relative";
+    padding: 10px;
+}
+.scrape-tile-keyword {
+    font-family: $font-primary;
+    font-size: 1.1em;
+    letter-spacing: -.5px;
+}

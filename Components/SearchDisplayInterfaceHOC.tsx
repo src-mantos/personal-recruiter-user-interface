@@ -11,28 +11,28 @@ import { CSSProperties } from "react";
 import { postDataState } from "./contexts/EditorContext";
 
 
-const SearchDisplayInterfaceHOC = (props:StylableComponent) => {
-    const activePostData = useRecoilValue(postDataState);
+const SearchDisplayInterfaceHOC = ( props:StylableComponent ) => {
+    const activePostData = useRecoilValue( postDataState );
     const dimentions = useWindowDimensions();
     let wrapperStyle:CSSProperties = {};
     let childHeight = 0;
-    if(dimentions !== undefined){
+    if ( dimentions !== undefined ){
         const { width, height } = dimentions;
         const panelHeight = 180;
         wrapperStyle.height = height-panelHeight;
-        childHeight = wrapperStyle.height - (wrapperStyle.height*.05);
+        childHeight = wrapperStyle.height - ( wrapperStyle.height*.05 );
     }
-    const editorClass = (activePostData.origState == undefined)? "is-4":"is-8";
-    
-    return (
-        <div className={['tile is-ancestor',  props.className ].join(" ")} style={wrapperStyle}>
+    const editorClass = ( activePostData.origState == undefined )? "is-4":"is-8";
 
-            <div className={['tile is-parent'].join(" ")} style={{ paddingLeft:"0px",paddingRight:"0px" }} >
-                <div className={['tile is-child', 'columns', styles["scrape-column-height"]].join(" ")}>
-                    <div className={['column'].join(" ")} style={{ paddingLeft:"0px" }}>
+    return (
+        <div className={['tile is-ancestor', props.className ].join( " " )} style={wrapperStyle}>
+
+            <div className={['tile is-parent'].join( " " )} style={{ paddingLeft: "0px", paddingRight: "0px" }} >
+                <div className={['tile is-child', 'columns', styles["scrape-column-height"]].join( " " )}>
+                    <div className={['column'].join( " " )} style={{ paddingLeft: "0px" }}>
                         <PostResultPanel height={childHeight}></PostResultPanel>
                     </div>
-                    <div className={['column', editorClass].join(" ")}>
+                    <div className={['column', editorClass].join( " " )}>
                         <EditorPanel height={childHeight}></EditorPanel>
                     </div>
                 </div>

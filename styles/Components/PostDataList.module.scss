@@ -1,0 +1,83 @@
+@import './colors.scss';
+
+$rgb: 180;
+$rgb2: 220;
+
+
+.table-row > * {
+    margin: 1px;
+    padding:0px;
+}
+
+/** Result Set Componenet **/
+.vtable-viewport {
+    overflow: auto;
+}
+.vtable-canvas {
+    
+    width: 100%;
+    position: relative;
+}
+.vtable-row {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.vtable-nopad > * {
+    padding: .1em 1em;
+}
+.vtable-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.vtable-subtitle {
+    font-weight: 700;
+}
+
+/* list data styles */
+.block {
+    display:block;
+}
+.block:hover {
+    // background-color: rgb(224, 224, 224);
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.post-tile {
+    height: 160px;
+    font-size: .9em;
+    background-color: rgb(235, 241, 241);
+    margin: 0;
+    border: 1px solid #ccc;
+}
+.post-tile:hover {
+    background-color: rgb(242, 248, 248);
+}
+.post-tile.selected {
+    background-color: rgb(225 255 255 / 67%);
+}
+
+.post-tile-header {
+    border-bottom: 1px solid #808080
+}
+
+.post-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.post-sub-title {
+    // font-size: .85em;
+    white-space: nowrap;
+    overflow: hidden;
+}

@@ -1,0 +1,63 @@
+@import './colors.scss';
+
+.scrape-tile {
+    min-width: 180px;
+    height: 80px;
+    font-size: .8em;
+    font-family: $font-secondary;
+    padding: 10px;
+}
+.scrape-tile-keyword {
+    font-family: $font-primary;
+    font-size: 1.1em;
+    letter-spacing: -.5px;
+    padding-top: 10; 
+    padding-bottom: 0;
+    padding-right: 0; 
+    font-weight: "bold";
+}
+
+.bulma-block{
+    display: flex;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    margin-top: -0.75rem;
+}
+// .scrape-tile-section { 
+//     overflow-y: hidden;
+//     overflow-x: hidden;
+// }
+.scrape-metric-scroll {
+    overflow-y: inherit;
+    overflow-x: hidden;
+    height: 55px;
+}
+// .scrape-tile-section.hide {
+//     display: none;
+// }
+
+.tile-icon-wrap {
+    padding-top: 10;
+    padding-bottom: 0;
+    cursor: pointer !important;
+}
+.tile-icon {
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #999
+}
+.tile-icon:hover {
+    color: #888
+}
+
+.columns-spacing {
+    margin-bottom: 0 !important;
+}
+.columns-spacing > * {
+    padding-bottom: 0
+}
+
+.hide-content {
+    height:0;
+    overflow: hidden;
+}

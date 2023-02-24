@@ -4,7 +4,7 @@
     padding: 0 !important;
 }
 .no-margin {
-    margin: 0;
+    margin: 0 !important;
 }
 .no-wrap{
     white-space: nowrap;
@@ -12,21 +12,14 @@
 
 
 .editor-panel{
-    position:relative;
-    border: 1px solid $independence;
-    background-color: $latte;
+    height:calc(100vh - .8em);
 }
 .field-label{
     color: #939393;
+    margin-bottom: 0px !important;
 }
-.field-size{
-    width: calc(100% - 4em);
-}
-.field-indent{
-    margin-left: 1.5em;
-}
-.field-collapse{
-    margin-top: -1em;
+.field-input{
+    height:auto;
 }
 
 .floating-control {

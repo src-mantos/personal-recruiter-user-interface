@@ -1,9 +1,9 @@
-import { atom, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { atom, AtomEffect, DefaultValue, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
-import { UserSearchFilter } from '../types';
+import { UserSearchFilter, SearchFilter, SearchQuery, AsyncState, FilterSet, FilterMap, PostDataProps, MakeRequest } from '../types';
 
-const ErrorHandler = async (resp: Response): Promise<any> => {
-    console.error(resp);
+const ErrorHandler = async ( resp: Response ): Promise<any> => {
+    console.error( resp );
 };
 
 export enum SearchAtomKeys {
@@ -11,55 +11,66 @@ export enum SearchAtomKeys {
     SearchResult = 'SearchResult',
     SearchFilters = 'SearchFilters',
     DataSet = 'DataSet',
-} 
+}
 
-export interface SearchQuery extends Partial<ISearchQuery> {
-    sendRequest: boolean;
-    dataset?: IPostData[];
+const requestLog:{( key:string ):AtomEffect<any>} = ( key:string ) => ({ onSet }) => {
+    onSet( ( newVal ) => {
+        if ( newVal.sendRequest )
+            console.info( "Request: "+key, newVal );
+    });
 };
 
+const resetAsyncStatus:AtomEffect<any> = ({ onSet, setSelf }) => {
+    onSet( ( hasRequest ) => {
+        if ( hasRequest.asyncState && hasRequest.asyncState == AsyncState.Complete )
+            setTimeout( () => {
+                setSelf({ ...hasRequest, asyncState: AsyncState.Pending });
+                console.log( "resetting search state", AsyncState.Pending );
+            }, 500 );
+    });
+};
 
-export const searchRequestState = atom<SearchQuery>({
-    key: SearchAtomKeys.SearchRequest,
-    default: { sendRequest:false },
+export const searchRequestState = atom< SearchQuery<IPostData> >({
+    key    : SearchAtomKeys.SearchRequest,
+    default: { sendRequest: false, asyncState: AsyncState.Pending },
     effects: [
-        ({ onSet, setSelf, getPromise }) => {
-            onSet((newReq) => {
-                const makeRequest = async () =>{
+        requestLog( "searchRequestState" ),
+        ({ onSet, setSelf }) => {
+            onSet( ( queryState ) => {
+
+                const makeRequest = async () => {
+                    const { keywords, filters, sort } = queryState;
                     const payload:ISearchQuery = {
-                        keywords: (newReq.keywords===undefined)?"":newReq.keywords,
-                        filters:newReq.filters
+                        keywords: ( keywords===undefined )?"":keywords,
+                        filters,
+                        sort
                     };
-                    const resp: Response = await fetch('/dataservice/data/search/', {
-                        method:"POST",
+                    setSelf({ ...queryState, sendRequest: false, asyncState: AsyncState.Requested });
+
+                    const resp: Response = await fetch( '/dataservice/data/search/', {
+                        method : "POST",
                         headers: {
-                            'Accept': 'application/json',
+                            'Accept'      : 'application/json',
                             'Content-Type': 'application/json'
                         },
-                        body:JSON.stringify(payload)
+                        body: JSON.stringify( payload )
                     });
-                    const tmp = await resp.json() as unknown as IPostData[];
-                    setSelf({ ...newReq, dataset:tmp, sendRequest:false  });
-                    console.log("updated");
+                    if ( resp.status == 200 ){
+                        const tmp = await resp.json() as unknown as IPostData[];
+                        setSelf({ ...queryState, sendRequest: false, dataset: tmp, asyncState: AsyncState.Complete });
+                    } else {
+                        setSelf({ ...queryState, sendRequest: false, asyncState: AsyncState.Error });
+                    }
                 };
-                if(newReq.sendRequest){
-                    setSelf({ ...newReq, sendRequest:false });
+                if ( queryState.sendRequest )
                     makeRequest();
-                    console.log("requested");
-                }
+                // else
+                //     setSelf({ ...queryState, asyncState: AsyncState.Pending });
+
             });
         },
+        resetAsyncStatus
     ],
-});
-
-
-
-/**
- * separate filter consolidation state
- */
-export const searchFilterState = atom<UserSearchFilter[]>({
-    key: SearchAtomKeys.SearchFilters,
-    default: [],
 });
 
 /**
@@ -72,68 +83,80 @@ export const searchFilterSelector = selector({
     key: 'get' + SearchAtomKeys.SearchFilters,
     get:
         ({ get }) => {
-            const list: UserSearchFilter[] = get(searchFilterState);
-            if(list == undefined){
-                return [];
-            }
-            const mapping: Record<string,UserSearchFilter[]> = {};
-            
-            list.forEach((filter) => {
-                console.log('step',mapping, filter);
-                if (mapping[filter.dataKey] == undefined) {
-                    mapping[filter.dataKey] = [];
-                }
-                mapping[filter.dataKey].push(filter);
-            });
+            const searchObj:SearchQuery<IPostData> = get( searchRequestState );
+            const { filters } = searchObj;
+            const matrix = new Map<string, UserSearchFilter[]>();
+            if ( filters !== undefined && filters.length > 0 ){
+                for ( let filter of filters ){
+                    // FilterMap.get( filter.dataKey );
 
-            const sub: UserSearchFilter[][] = [];
-            const keySet = Object.keys(mapping);
-            for(let fKey of keySet){
-                sub.push(mapping[fKey]);
+                    let orRow = matrix.get( filter.dataKey );
+                    if ( orRow === undefined )
+                        orRow = [];
+
+                    const dispFilter:UserSearchFilter = { ...FilterMap.get( filter.dataKey ), ...filter };
+                    orRow.push( dispFilter );
+                    matrix.set( filter.dataKey, orRow );
+                }
+
+                const displayFilterMatrix: UserSearchFilter[][] = [];
+                for ( let key of [...matrix.keys()].sort() ){
+                    const row = matrix.get( key );
+                    if ( row !== undefined )
+                        displayFilterMatrix.push( row );
+                }
+                return displayFilterMatrix;
             }
-            
-            return sub;
+            return [];
         },
 });
 
-const padWidth = 28;
-export const styleFilterSelector = selector({
-    key: 'style' + SearchAtomKeys.SearchFilters,
-    get:
-        ({ get }) => {
-            const sortedFilters: UserSearchFilter[][] = get(searchFilterSelector);
-            const columnWidths:number[] = [];
-            for(let i=0; i<sortedFilters.length; i++){
-                const row = sortedFilters[i];
-                for(let j=0; j<row.length; j++){
-                    const width = (padWidth + row[j].label.length + row[j].value.length)*3;
-                    if(isNaN(columnWidths[i])){
-                        columnWidths[i] = width;
-                    }else{
-                        columnWidths[i] = Math.max(columnWidths[i],width);
-                    }
-                }
-            }
-            return columnWidths;
-        },
+
+
+const convertToUI = ( data:IPostData[] | undefined ):PostDataProps[] => {
+    if ( data === undefined )
+        return [];
+    else
+        return data.map( ( elem, index ) => {
+            return {
+                record  : elem,
+                selected: false,
+                index
+            };
+        });
+};
+
+export const postDataState = atom<PostDataProps[]>({
+    key    : "postDataState",
+    default: [],
 });
 
-// export const searchFilterSelectorRemove = selectorFamily({
-//     key: 'remove' + SearchAtomKeys.SearchFilters,
-//     get:
-//         (param) =>
-//         ({ get }) => {
-//             return;
-//         },
+export const postDataStateSelector = selector({
+    key: "postDataStateSelector",
+    get: ({ get }) => {
+        const uiState = get( postDataState );
+        const { dataset, asyncState } = get( searchRequestState );
+        if ( uiState.length != dataset?.length || asyncState == AsyncState.Complete )
+            return convertToUI( dataset );
 
-//     set:
-//         (removeFilter:FilterStateRecord) =>
-//         ({ set, get }, newValue) => {
-//             const filterList = get(searchFilterState);
-//             const updateList = [];
-//             filterList.forEach((filter)=>{
-//                 const k = filter.key == removeFilter.
-//             })
-//             set(searchFilterState, );
-//         },
-// });
+        return uiState;
+    },
+    set: ({ get, set }, displayList: PostDataProps[] | DefaultValue ) => {
+        const { dataset, asyncState } = get( searchRequestState );
+        
+        // if ( dataset !== undefined && displayList instanceof Array )
+        //     if ( displayList.length != dataset?.length || asyncState == AsyncState.Complete )
+        //         set( postDataState, convertToUI( dataset ) );
+        //     else
+        //         set( postDataState, displayList.map( ( rec:PostDataProps, index ):PostDataProps => {
+        //             let retObj:PostDataProps={ ...rec };
+        //             if ( dataset[index] !== undefined ){
+        //                 retObj.record = dataset[index];
+        //                 retObj.index = index;
+        //             }
+        //             return retObj;
+        //         }) );
+        // else 
+        set( postDataState, displayList );
+    },
+});

@@ -2,7 +2,7 @@ import { faSearch, faMapLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CSSProperties, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { searchFilterSelector, searchFilterState, searchRequestState, styleFilterSelector } from "../contexts/SearchContext";
+import { searchFilterSelector, searchFilterState, searchRequestState } from "../contexts/SearchContext";
 import { UserSearchFilter } from "../types";
 
 
@@ -10,8 +10,6 @@ const FilterDisplay = () => {
     const [searchFilters, setUserFilters] = useRecoilState(searchFilterState);
     const [searchQuery, setSearchQuery] = useRecoilState(searchRequestState);
     const sortedFilters = useRecoilValue(searchFilterSelector);
-    const colWidths = useRecoilValue(styleFilterSelector);
-    console.log(sortedFilters, colWidths);
 
     if(searchFilters.length == 0) {
         return (
@@ -27,7 +25,7 @@ const FilterDisplay = () => {
                 if(fltr.dataKey === filter.dataKey && fltr.value == filter.value){
                     const updatedFilters = searchFilters.slice(0,i).concat( (searchFilters.length == i+1)? [] : searchFilters.slice(i+1));
                     setUserFilters( updatedFilters );
-                    setSearchQuery({...searchQuery,filters:updatedFilters, sendRequest:true});
+                    setSearchQuery({ ...searchQuery,filters:updatedFilters, sendRequest:true });
                     break;
                 }
             }
@@ -58,12 +56,6 @@ const FilterDisplay = () => {
                     </div>
                 );
             })}
-            {/* {searchFilters.map((filter,index)=>(
-                <div key={"filter-"+index+"-"+filter.dataKey} 
-                    className={['tag'].join(" ")}>
-                    {filter.label} : {filter.value}
-                </div>
-            ))} */}
         </div>
     );
 };
