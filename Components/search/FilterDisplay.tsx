@@ -1,14 +1,13 @@
 import { faSearch, faMapLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FilterOperation, ISearchFilter, ISort } from "data-service/types";
-import { CSSProperties, useRef, useState } from "react";
+import React, { CSSProperties, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { searchFilterSelector, searchRequestState } from "../contexts/SearchContext";
 import { UserSearchFilter } from "../types";
 
 
 const FilterDisplay = () => {
-    // const [searchFilters, setUserFilters] = useRecoilState( searchFilterState );
     const [searchQuery, setSearchQuery] = useRecoilState( searchRequestState );
     const sortedFilters = useRecoilValue( searchFilterSelector );
     const sortList = ( searchQuery.sort===undefined )? []:searchQuery.sort;
@@ -28,12 +27,31 @@ const FilterDisplay = () => {
         }
     };
 
-    const RemoveSort = ( sortObj:ISort ) => () => {
+    const RemoveSort = ( sortObj:ISort ) => ( event:React.MouseEvent ) => {
+        event.preventDefault();
         setSearchQuery({
             ...searchQuery,
             sort       : sortList.filter( ({ dataKey }) => dataKey !== sortObj.dataKey ),
             sendRequest: true
         });
+    };
+    const ToggleSort = ( sortObj:ISort ) => () => {
+        let index = -1;
+        sortList.forEach( ( val, ind ) => {
+            if ( val.dataKey == sortObj.dataKey )
+                index = ind;
+        });
+
+        if ( index >=0 )
+            setSearchQuery({
+                ...searchQuery,
+                sendRequest: true,
+                sort       : [
+                    ...sortList.slice( 0, index ),
+                    { ...sortObj, direction: sortObj.direction*-1 },
+                    ...sortList.slice( index+1 )
+                ],
+            });
     };
 
     return (
@@ -68,17 +86,19 @@ const FilterDisplay = () => {
             ) )}
             <div key={'FilterRow'}
                 className={['tile is-parent'].join( " " )}
-                style={{ padding: "0px 12px" }}
+                style={{ padding: "3px 12px 0px 12px", marginTop: 3, borderTop: "1px solid #ddd" }}
             >
                 {sortList.map( ({ dataKey, direction }) => (
                     <div key={"sort-"+dataKey}
                         className={['tag', 'is-child', 'columns'].join( " " )}
                         style={{
-                            margin: "1px 5px",
-                            border: "1px solid #ccc"
+                            margin         : "1px 5px",
+                            border         : "1px solid #ccc",
+                            backgroundColor: "#dcefff"
                         }}>
                         <div className={['column'].join( " " )}
-                            style={{ letterSpacing: "-.2px", padding: "0", minWidth: "120px" }}
+                            onClick={ToggleSort({ dataKey, direction })}
+                            style={{ letterSpacing: "-.2px", padding: "0", minWidth: "100px", cursor: "pointer" }}
                         >
                             {dataKey} : {( direction > 0 )? 'asc':'desc'}
                         </div>

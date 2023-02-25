@@ -1,24 +1,22 @@
-import React, { useState, useEffect, Key } from 'react';
+import React from 'react';
 
 import { IPostData } from 'data-service/types';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { useRecoilValueLoadable, useRecoilValue, useRecoilState, useRecoilStateLoadable } from 'recoil';
-import {  postDataStateSelector, searchRequestState } from '../contexts/SearchContext';
+import {  postDisplayListState, searchRequestState } from '../contexts/SearchContext';
 
 import DataStyles from '../../styles/Components/PostDataList.module.scss';
 import { truncEllipsis } from '../FormUtils';
-import { postDataState, remotePostDataState } from '../contexts/EditorContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLink } from '@fortawesome/free-solid-svg-icons';
+import { remotePostDataState } from '../contexts/EditorContext';
 import PostDataListItem from './PostDataListItem';
 import { PostDataProps } from '../types';
 
 
 const PostDataList = ( props: {height:number}) => {
     const parentRef = React.useRef<HTMLDivElement>( null );
-    const [viewData, setDataset] = useRecoilState<PostDataProps[]>( postDataStateSelector );
+    const [viewData, setDataset] = useRecoilState<PostDataProps[]>( postDisplayListState );
     const [editContext, setContext] = useRecoilState( remotePostDataState );
 
     const setRecord = ( post:Partial<IPostData>, index:number ) => {
@@ -53,7 +51,7 @@ const PostDataList = ( props: {height:number}) => {
                 ...viewData.slice( index+1 ).map( unSelectMapping )
             ] );
         }
-        console.log({ entity, index });
+        // console.log({ entity, index });
     };
 
     return (

@@ -8,10 +8,13 @@ import { faAdd, faSearch, faToggleOn, faToggleOff } from '@fortawesome/free-soli
 import { useRecoilState } from 'recoil';
 import { searchRequestState } from '../contexts/SearchContext';
 
+/* simple compare func */
 const isFilterEqual = ( lhs:ISearchFilter, rhs:ISearchFilter ) => lhs.dataKey == rhs.dataKey && lhs.operation == rhs.operation && lhs.value == rhs.value;
+
 const SearchControls = ( props:StylableComponent ) => {
     const [searchQuery, setSearchQuery] = useRecoilState( searchRequestState );
-    const [filterState, setFilter] = useState<UserSearchFilter>({ ...FilterSet[0], value: true }); //using this for the toggle state
+    /* using the composite select state & boolean value object for this state */
+    const [filterState, setFilter] = useState<UserSearchFilter>({ ...FilterSet[0], value: true });
     const filterInput = useRef<HTMLInputElement>( null );
 
     const updateFilterState=( event:React.ChangeEvent<HTMLSelectElement> ) => {
@@ -21,6 +24,7 @@ const SearchControls = ( props:StylableComponent ) => {
 
     const getCurrentFilter = ( ) => {
         let filterValue:boolean|string;
+        //TODO: add in date time processing for before/after
         if ( filterState.operation == FilterOperation.REGEX || filterState.operation == FilterOperation.IN )
             filterValue = ( filterInput !== null && filterInput.current !== null )?filterInput.current.value : "";
         else
@@ -30,7 +34,6 @@ const SearchControls = ( props:StylableComponent ) => {
         if ( filterValue !== "" ){
             let dup = false;
             const newFilter:ISearchFilter = { ...filterState, value: filterValue };
-            // console.log( "CurrFilter", { filterState, newFilter, filterValue });
 
             for ( let filter of userFilters )
                 if ( isFilterEqual( newFilter, filter ) )
@@ -70,6 +73,7 @@ const SearchControls = ( props:StylableComponent ) => {
         setSearchQuery({ ...searchQuery, sendRequest: true });
     };
 
+    const recordCount = searchQuery.dataset?.length;
     return (
         <div className={['column is-vertical is-half', 'control'].join( " " )} style={{ paddingTop: 0 }}>
             <div className={['columns', FormStyles["no-margin"], FormStyles["search-column-pad"]].join( " " )} style={{ marginBottom: 0 }}>
@@ -80,6 +84,9 @@ const SearchControls = ( props:StylableComponent ) => {
                         onChange={keywordHandler}
                         onKeyDown={keywordHandler}
                     />
+                    {( recordCount !== undefined )?(
+                        <label style={{ position: "absolute", top: 15, right: 85 }}>{recordCount} found</label>
+                    ):""}
                 </div>
                 <div className={['column is-narrow'].join( " " )} >
                     <a className={['button control'].join( " " )}
@@ -105,15 +112,30 @@ const SearchControls = ( props:StylableComponent ) => {
                 </div>
 
                 <div className={['column is-narrow'].join( " " )} style={{ lineHeight: "2.6em" }}>
-                    {( filterState.operation == FilterOperation.REGEX || filterState.operation == FilterOperation.IN )?(
-                        <div style={{ width: "55px" }}>
-                        matches
-                        </div>
-                    ):(
-                        <div style={{ width: "55px" }}>
-                            {( filterState.value )?"includes":"excludes"}
-                        </div>
-                    )}
+                    {( () => {
+                        let text = "";
+                        switch ( filterState.operation ){
+                            case FilterOperation.REGEX:
+                            case FilterOperation.IN:
+                                text = "matches";
+                                break;
+                            case FilterOperation.BOOL:
+                                text = ( filterState.value )?"includes":"excludes";
+                                break;
+                            case FilterOperation.BEFORE:
+                                text = "before";
+                                break;
+                            case FilterOperation.AFTER:
+                                text = "after";
+                                break;
+                            default:
+                        }
+                        return (
+                            <div style={{ width: "55px" }}>
+                                {text}
+                            </div>
+                        );
+                    })()}
                 </div>
 
                 <div className={['column'].join( " " )} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
@@ -128,10 +150,18 @@ const SearchControls = ( props:StylableComponent ) => {
                         </a>
                     ):""}
                     {( filterState.operation == FilterOperation.REGEX || filterState.operation == FilterOperation.IN )?(
-                        <input type="text" title={"filterTitle"}
+                        <input type="text" title={"Enter a Regex query or comma separated values"}
                             ref={filterInput}
                             className={['input control'].join( " " )}
-                            placeholder={"placeText"}
+                            placeholder={"Filter Word"}
+                            onKeyDown={filterHandler}
+                        />
+                    ):""}
+                    {( filterState.operation == FilterOperation.BEFORE || filterState.operation == FilterOperation.AFTER )?(
+                        <input type="datetime-local" title={"Enter a filtering date"}
+                            ref={filterInput}
+                            className={['input control'].join( " " )}
+                            placeholder={"Before / After"}
                             onKeyDown={filterHandler}
                         />
                     ):""}

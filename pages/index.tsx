@@ -5,9 +5,6 @@ import React from 'react';
 import { RecoilRoot } from "recoil";
 
 import AppHeader from '../Components/AppHeader';
-// import ScrapeInterfaceHOC from '../Components/ScrapeInterfaceHOC';
-import SearchInterfaceHOC from '../Components/SearchInterfaceHOC';
-import SearchDisplayInterfaceHOC from '../Components/SearchDisplayInterfaceHOC';
 import ScrapeHUD from '../Components/scrape/ScrapeHUD';
 import SearchHUD from '../Components/search/SearchHUD';
 import DataDisplayInterface from '../Components/data/DataDisplayInterface';
@@ -27,14 +24,12 @@ const Home: NextPage = () => (
             </Head>
 
             <AppHeader key={"header"}/>
+
             <ScrapeHUD></ScrapeHUD>
-            {/* <ScrapeInterfaceHOC></ScrapeInterfaceHOC> */}
+
             <SearchHUD></SearchHUD>
-            {/* <SearchInterfaceHOC></SearchInterfaceHOC> */}
 
             <DataDisplayInterface></DataDisplayInterface>
-            {/* <SearchDisplayInterfaceHOC></SearchDisplayInterfaceHOC> */}
-
 
         </div>
 

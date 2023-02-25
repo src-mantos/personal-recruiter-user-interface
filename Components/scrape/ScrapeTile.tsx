@@ -7,18 +7,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { removeScrapeRequest } from "../../Components/contexts/ScrapeContext";
 import { useRecoilState } from "recoil";
+import { truncEllipsis } from "../FormUtils";
 
-
+//TODO we need an active/running state indication
+// and a snappier update on the status would be nice
 
 const ScrapeTile = ( props:ActiveScrapeRequest ) => {
-    const { keyword, pageDepth, location, uuid, _id, complete, metrics, requestTime } = props;
+    const { keyword, pageDepth, location, uuid, _id, complete, metrics, requestTime, isActive: isRunning } = props;
     const displayLocation = ( location == undefined||location == null )? "\"Anywhere\"":location;
     const displayTime = new Intl.DateTimeFormat( 'en-US', {
         hour  : 'numeric',
         minute: 'numeric',
         second: 'numeric',
     }).format( ( requestTime !== undefined )? new Date( requestTime ): new Date() );
-    const isActive = metrics !== undefined && metrics.length > 0;
+    const isActive = isRunning || metrics !== undefined && metrics.length > 0;
     const [showMetrics, setShowState] = useState( isActive );
     const [remTile, removeTile] = useRecoilState( removeScrapeRequest );
 
@@ -68,7 +70,7 @@ const ScrapeTile = ( props:ActiveScrapeRequest ) => {
                     <div>{displayTime}</div>
                 </div>
                 <div className={["column", FormStyle["no-wrap"]].join( " " )}>
-                    <div style={{ letterSpacing: "-1.1px" }} title={uuid}>{uuid?.substring( 0, 18 )+".."}</div>
+                    <div style={{ letterSpacing: "-1.1px" }} title={uuid}>{truncEllipsis( uuid, 20 )}</div>
                 </div>
             </div>
 
@@ -76,7 +78,7 @@ const ScrapeTile = ( props:ActiveScrapeRequest ) => {
                 style={{ margin: "1.3em -10px 0 0" }}>
                 <div className={["column", TileStyle["columns-spacing"], TileStyle["scrape-metric-scroll"]].join( " " )}>
                     {( metrics !== undefined )? metrics.map( ( value:IRunMetric, index ) => {
-                        const { vendorDesc, numComplete, numTotal, pageSize } = value;
+                        const { vendorDesc, numComplete, numTotal } = value;
                         const percComplete = Math.round( ( numComplete/numTotal )*100 )+"%";
                         return (
                             <div key={"metric-"+index} className={["columns"].join( " " )} style={{ cursor: "pointer" }}>

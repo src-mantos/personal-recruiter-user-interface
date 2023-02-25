@@ -2,14 +2,15 @@ import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditorPanel from "./EditorPanel";
 // import PostResultPanel from "../SearchDisplayComponents/PostResultPanel";
-import { PostDataProps, StylableComponent } from "../types";
+import { AsyncState, PostDataProps, StylableComponent } from "../types";
 import styles from '../../styles/Components/Form.module.scss';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { postDataStateSelector, searchRequestState } from "../contexts/SearchContext";
+import { postDisplayListState, convertToUI, searchRequestState } from "../contexts/SearchContext";
 import useWindowDimensions from "../contexts/useWindowDimentions";
-import { CSSProperties, useEffect } from "react";
-import { postDataState, remotePostDataState } from "../contexts/EditorContext";
+import { CSSProperties, useEffect, useMemo } from "react";
+import { remotePostDataState } from "../contexts/EditorContext";
 import PostDataList from "./PostDataList";
+import { IPostData } from "data-service/types";
 
 
 const DataDisplayInterface = ( props:StylableComponent ) => {
@@ -17,8 +18,18 @@ const DataDisplayInterface = ( props:StylableComponent ) => {
     const childHeight = ( dimentions.height > 200 )? dimentions.height * .95 : 600;
     let wrapperStyle:CSSProperties = { height: ( dimentions.height > 200 )? dimentions.height * .9 : 666 };
 
-    const [viewData, setDataset] = useRecoilState<PostDataProps[]>( postDataStateSelector );
+    const [viewData, setDataset] = useRecoilState<PostDataProps[]>( postDisplayListState );
+    const searchQuery = useRecoilValue( searchRequestState );
     const [editContext, setContext] = useRecoilState( remotePostDataState );
+
+    // synchronizing atom's
+    useEffect( () => {
+        if ( searchQuery.asyncState == AsyncState.Complete )
+            setDataset( convertToUI( searchQuery.dataset ) );
+
+    }, [searchQuery, setDataset] );
+
+    // Handle Editor updates
     useEffect( () => {
         if ( editContext.updateList && editContext.index >= 0 ){
             let original = viewData[editContext.index];
@@ -38,7 +49,6 @@ const DataDisplayInterface = ( props:StylableComponent ) => {
             <div className={['tile is-parent'].join( " " )} style={{ paddingLeft: "0px", paddingRight: "0px" }} >
                 <div className={['tile is-child', 'columns', styles["scrape-column-height"]].join( " " )}>
                     <div className={['column'].join( " " )} style={{ paddingLeft: "0px" }}>
-                        {/* <PostResultPanel height={childHeight}></PostResultPanel> */}
                         <PostDataList height={childHeight}></PostDataList>
                     </div>
                     <div className={['column'].join( " " )}>

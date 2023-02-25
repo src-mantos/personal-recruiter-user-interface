@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActiveScrapeRequest, DelayedTask, StylableComponent } from '../types';
 import FormStyles from '../../styles/Components/Form.module.scss';
-import HudStyles from '../../styles/Components/ScrapeHUD.module.scss';
-import { IScrapePostDataRequest, IScrapeRequest } from 'data-service/types';
 import { useRecoilState } from 'recoil';
 import { queueState, scrapeRequestState } from '../contexts/ScrapeContext';
 import { faSearch, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
@@ -56,7 +54,6 @@ const ScrapeControls = ( props?:StylableComponent ) => {
         }
     };
 
-    // Constants && Markup
     const controlSpaceStyle:React.CSSProperties = { marginBottom: ".1em" };
     return (
         <div className={['columns'].join( " " )}>

@@ -1,17 +1,7 @@
-import { atom, AtomEffect, DefaultValue, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
-import { UserSearchFilter, SearchFilter, SearchQuery, AsyncState, FilterSet, FilterMap, PostDataProps, MakeRequest } from '../types';
+import { atom, AtomEffect, selector } from 'recoil';
+import { IPostData, ISearchQuery } from 'data-service/types';
+import { UserSearchFilter, SearchQuery, AsyncState, FilterMap, PostDataProps } from '../types';
 
-const ErrorHandler = async ( resp: Response ): Promise<any> => {
-    console.error( resp );
-};
-
-export enum SearchAtomKeys {
-    SearchRequest = 'SearchRequest',
-    SearchResult = 'SearchResult',
-    SearchFilters = 'SearchFilters',
-    DataSet = 'DataSet',
-}
 
 const requestLog:{( key:string ):AtomEffect<any>} = ( key:string ) => ({ onSet }) => {
     onSet( ( newVal ) => {
@@ -31,7 +21,7 @@ const resetAsyncStatus:AtomEffect<any> = ({ onSet, setSelf }) => {
 };
 
 export const searchRequestState = atom< SearchQuery<IPostData> >({
-    key    : SearchAtomKeys.SearchRequest,
+    key    : "searchRequestState",
     default: { sendRequest: false, asyncState: AsyncState.Pending },
     effects: [
         requestLog( "searchRequestState" ),
@@ -64,9 +54,6 @@ export const searchRequestState = atom< SearchQuery<IPostData> >({
                 };
                 if ( queryState.sendRequest )
                     makeRequest();
-                // else
-                //     setSelf({ ...queryState, asyncState: AsyncState.Pending });
-
             });
         },
         resetAsyncStatus
@@ -80,7 +67,7 @@ export const searchRequestState = atom< SearchQuery<IPostData> >({
  * This entire implementation should be scrubbed in favor of an optimized store.
  */
 export const searchFilterSelector = selector({
-    key: 'get' + SearchAtomKeys.SearchFilters,
+    key: "searchFilterSelector",
     get:
         ({ get }) => {
             const searchObj:SearchQuery<IPostData> = get( searchRequestState );
@@ -88,8 +75,6 @@ export const searchFilterSelector = selector({
             const matrix = new Map<string, UserSearchFilter[]>();
             if ( filters !== undefined && filters.length > 0 ){
                 for ( let filter of filters ){
-                    // FilterMap.get( filter.dataKey );
-
                     let orRow = matrix.get( filter.dataKey );
                     if ( orRow === undefined )
                         orRow = [];
@@ -113,7 +98,7 @@ export const searchFilterSelector = selector({
 
 
 
-const convertToUI = ( data:IPostData[] | undefined ):PostDataProps[] => {
+export const convertToUI = ( data:IPostData[] | undefined ):PostDataProps[] => {
     if ( data === undefined )
         return [];
     else
@@ -126,37 +111,7 @@ const convertToUI = ( data:IPostData[] | undefined ):PostDataProps[] => {
         });
 };
 
-export const postDataState = atom<PostDataProps[]>({
-    key    : "postDataState",
+export const postDisplayListState = atom<PostDataProps[]>({
+    key    : "postDisplayListState",
     default: [],
-});
-
-export const postDataStateSelector = selector({
-    key: "postDataStateSelector",
-    get: ({ get }) => {
-        const uiState = get( postDataState );
-        const { dataset, asyncState } = get( searchRequestState );
-        if ( uiState.length != dataset?.length || asyncState == AsyncState.Complete )
-            return convertToUI( dataset );
-
-        return uiState;
-    },
-    set: ({ get, set }, displayList: PostDataProps[] | DefaultValue ) => {
-        const { dataset, asyncState } = get( searchRequestState );
-        
-        // if ( dataset !== undefined && displayList instanceof Array )
-        //     if ( displayList.length != dataset?.length || asyncState == AsyncState.Complete )
-        //         set( postDataState, convertToUI( dataset ) );
-        //     else
-        //         set( postDataState, displayList.map( ( rec:PostDataProps, index ):PostDataProps => {
-        //             let retObj:PostDataProps={ ...rec };
-        //             if ( dataset[index] !== undefined ){
-        //                 retObj.record = dataset[index];
-        //                 retObj.index = index;
-        //             }
-        //             return retObj;
-        //         }) );
-        // else 
-        set( postDataState, displayList );
-    },
 });

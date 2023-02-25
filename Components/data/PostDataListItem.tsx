@@ -1,15 +1,9 @@
 import React, { useState, useEffect, Key } from 'react';
-
-import { IPostData } from 'data-service/types';
-
-import { useVirtualizer } from '@tanstack/react-virtual';
-
 import { useRecoilValueLoadable, useRecoilValue, useRecoilState, useRecoilStateLoadable } from 'recoil';
 import {  searchRequestState } from '../contexts/SearchContext';
 
 import DataStyles from '../../styles/Components/PostDataList.module.scss';
 import { truncEllipsis } from '../FormUtils';
-import { postDataState } from '../contexts/EditorContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLink, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { PostDataProps } from '../types';
@@ -20,15 +14,13 @@ const PostDataListItem = ( props:PostDataProps ) => {
     const [searchQuery, setSearchQuery] = useRecoilState( searchRequestState );
     const addSort = ( sortField:string ) => () => {
         const sortList = ( searchQuery.sort === undefined )? []: [...searchQuery.sort];
-        const sortInd = sortList.findIndex( ({ dataKey }) => dataKey===sortField );
-
-        console.log("Sort Add:",{sortField,sortList,sortInd})
+        const sortInd = sortList.findIndex( ({ dataKey }) => dataKey==sortField );
 
         if ( sortInd == -1 )
             setSearchQuery({
                 ...searchQuery,
-                sendRequest:true,
-                sort: [
+                sendRequest: true,
+                sort       : [
                     ...sortList, {
                         dataKey  : sortField,
                         direction: -1
@@ -37,16 +29,14 @@ const PostDataListItem = ( props:PostDataProps ) => {
         else
             setSearchQuery({
                 ...searchQuery,
-                sendRequest:true,
-                sort: [
+                sendRequest: true,
+                sort       : [
                     ...sortList.slice( 0, sortInd ),
-                    {...sortList[sortInd], direction: sortList[sortInd].direction*-1},
+                    { ...sortList[sortInd], direction: sortList[sortInd].direction*-1 },
                     ...sortList.slice( sortInd+1 )
                 ]
             });
-
     };
-    // console.log("LI props",props);
 
     if ( record !== undefined ){
         const { description, directURL, location, organization, postedTime, title, userModified, _id, captureTime, salary } = record;
@@ -72,13 +62,11 @@ const PostDataListItem = ( props:PostDataProps ) => {
                                 style={{ paddingTop: "4px" }}>
                                 {truncEllipsis( organization, 20 )}
                             </div>
-                            {( organization != location )?(
-                                <div className={[DataStyles['post-sub-title'], DataStyles['block']].join( " " )}
-                                    onClick={addSort( "location" )}
-                                    style={{ paddingBottom: "4px" }}>
-                                    {truncEllipsis( location, 20 )}
-                                </div>
-                            ):""}
+                            <div className={[DataStyles['post-sub-title'], DataStyles['block']].join( " " )}
+                                onClick={addSort( "location" )}
+                                style={{ paddingBottom: "4px" }}>
+                                {truncEllipsis( location, 20 )}
+                            </div>
                         </div>
 
                         <div className={['column is-narrow is-vertical'].join( " " )} style={{ paddingTop: "5px", paddingBottom: "5px" }}>

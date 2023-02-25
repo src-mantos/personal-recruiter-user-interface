@@ -3,16 +3,16 @@ import EditorStyles from '../../styles/Components/EditorPanel.module.scss';
 import { IPostData } from 'data-service/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faFloppyDisk, faExternalLink, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { formatLocaleDateString, onEnterHandler, truncEllipsis } from '../FormUtils';
+import { onEnterHandler, truncEllipsis } from '../FormUtils';
 import { useRecoilState } from 'recoil';
-import { postDataState, remotePostDataState } from '../contexts/EditorContext';
+import { remotePostDataState } from '../contexts/EditorContext';
 import EditorControls from './EditorControls';
 
 
-type IPostKeys = "_id"|"captureTime"|"description"|"directURL"|"location"|"organization"|"postedTime"|"salary"|"title"
+type IPostKeys = keyof IPostData;
 
 const EditorPanel = ( props:{height:number}) => {
-    // const [activePostData, setActivePost] = useRecoilState( postDataState );
+    const descArea = useRef<HTMLTextAreaElement>( null );
     const [editContext, setContext] = useRecoilState( remotePostDataState );
     const { record: activeState } = editContext;
     const updateEntity = ( record:Partial<IPostData> ) => {
@@ -30,7 +30,6 @@ const EditorPanel = ( props:{height:number}) => {
     const fieldBlur = ( event:React.FocusEvent<HTMLInputElement, Element> | React.FocusEvent<HTMLTextAreaElement, Element> ) => {
         event.preventDefault();
         toggleField( event.target );
-        // console.log( "Update Active Record", activePostData );
     };
     const toggleField = ( el:HTMLInputElement|HTMLTextAreaElement ) => {
         el.readOnly = !el.readOnly;
@@ -54,6 +53,12 @@ const EditorPanel = ( props:{height:number}) => {
             updateEntity( updateObj );
         }
     };
+
+    //scroll to top of the textarea on "reload"
+    useEffect( () => {
+        if ( descArea.current )
+            descArea.current.scrollTo({ top: 0 });
+    }, [descArea, activeState] );
     return (
         <div className={["box", EditorStyles['editor-panel']].join( " " )} style={{ height: props.height }}>
             <EditorControls></EditorControls>
@@ -62,8 +67,7 @@ const EditorPanel = ( props:{height:number}) => {
                 <label className={[labelClassStd].join( " " )}>Job Title</label>
                 <input className={[fieldClassStd, "is-large"].join( " " )}
                     readOnly={true} type="text"
-                    // defaultValue={activeState.title}
-                    value={getRecordValue("title")}
+                    value={getRecordValue( "title" )}
                     data-field="title"
                     onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}
                     onChange={changeHandler}
@@ -74,7 +78,7 @@ const EditorPanel = ( props:{height:number}) => {
                     <label className={[labelClassStd, "is-small"].join( " " )}>Company</label>
                     <input className={[fieldClassStd].join( " " )}
                         readOnly={true} type="text"
-                        value={getRecordValue("organization")}
+                        value={getRecordValue( "organization" )}
                         data-field="organization"
                         onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}
                         onChange={changeHandler}
@@ -84,7 +88,7 @@ const EditorPanel = ( props:{height:number}) => {
                     <label className={[labelClassStd, "is-small"].join( " " )}>Location</label>
                     <input className={[fieldClassStd].join( " " )}
                         readOnly={true} type="text"
-                        value={getRecordValue("location")}
+                        value={getRecordValue( "location" )}
                         data-field="location"
                         onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}
                         onChange={changeHandler}
@@ -96,7 +100,7 @@ const EditorPanel = ( props:{height:number}) => {
                     <label className={[labelClassStd, "is-small"].join( " " )}>Salary Info</label>
                     <input className={[fieldClassStd].join( " " )}
                         readOnly={true} type="text"
-                        value={getRecordValue("salary")}
+                        value={getRecordValue( "salary" )}
                         data-field="salary"
                         onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}
                         onChange={changeHandler}
@@ -106,7 +110,7 @@ const EditorPanel = ( props:{height:number}) => {
                     <label className={[labelClassStd, "is-small"].join( " " )}>Post Updated</label>
                     <input className={[fieldClassStd].join( " " )}
                         readOnly={true} type="text"
-                        value={getRecordValue("postedTime")}
+                        value={getRecordValue( "postedTime" )}
                         data-field="postedTime"
                         onBlur={fieldBlur} onFocus={fieldFocus} onKeyDown={looseFocus}
                         onChange={changeHandler}
@@ -118,8 +122,9 @@ const EditorPanel = ( props:{height:number}) => {
                 <label className={[labelClassStd, "is-small"].join( " " )}>Job Description</label>
                 <span className={["contianer", "control"].join( " " )}>
                     <textarea className={["textarea is-focused is-static", EditorStyles["ep-textArea"], EditorStyles['no-pad']].join( " " )}
+                        ref={descArea}
                         readOnly={true}
-                        value={getRecordValue("description")}
+                        value={getRecordValue( "description" )}
                         data-field="description"
                         onBlur={fieldBlur} onFocus={fieldFocus}
                         onChange={changeHandler}

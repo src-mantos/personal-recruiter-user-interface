@@ -1,13 +1,12 @@
-import React, { useRef, useState, useEffect, DetailedHTMLProps, HTMLAttributes } from 'react';
+import React from 'react';
 import EditorStyles from '../../styles/Components/EditorPanel.module.scss';
 import { IPostData } from 'data-service/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faFloppyDisk, faExternalLink, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { useRecoilState } from 'recoil';
-import { postDataState, remotePostDataState } from '../contexts/EditorContext';
+import { remotePostDataState } from '../contexts/EditorContext';
 
 const EditorControls = () => {
-    // const [activePostData, setActivePost] = useRecoilState( postDataState );
     const [editContext, setContext] = useRecoilState( remotePostDataState );
     const activeRec = editContext.record;
 
@@ -17,12 +16,12 @@ const EditorControls = () => {
             window.open( link, '_blank' );
     };
     const saveAction = () => {
-        console.log("save", activeRec );
+        console.log( "save", activeRec );
         setContext({ ...editContext, sendRequest: true });
     };
     const resetAction = () => {
         setContext({ ...editContext, fetchRecord: true });
-    }
+    };
     return (
         <div className={[""].join( " " )} style={{ position: "relative" }}>
             <div className={["tile is-ancestor is-vertical", "box"].join( " " )} style={{ position: "absolute", zIndex: 10, top: 0, right: 0, margin: 0, padding: "2px 5px", border: '1px solid #aaa' }}>

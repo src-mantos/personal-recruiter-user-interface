@@ -1,33 +1,10 @@
-import { atom, selector, selectorFamily, useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import {  IPostData, IPostMetaData, IPostDataIndex, ISearchQuery, ISearchFilter } from 'data-service/types';
+import { atom } from 'recoil';
+import { IPostData } from 'data-service/types';
 import { AsyncState, EditorPostData } from '../types';
 
 const ErrorHandler = async ( resp: Response ): Promise<any> => {
     console.error( resp );
 };
-
-export enum EditorAtomKeys {
-    PostData = 'PostData'
-}
-export interface ActivePostData {
-    remoteState: Partial<IPostData>;
-    activeState: Partial<IPostData>;
-}
-
-export const postDataState = atom<ActivePostData>({
-    key    : EditorAtomKeys.PostData,
-    default: {
-        remoteState: {},
-        activeState: {}
-    },
-    effects: [
-        ({ onSet, setSelf, getLoadable }) => {
-            onSet( ( postDataState ) => {
-                console.log( "set Editor data", postDataState );
-            });
-        },
-    ],
-});
 
 export const remotePostDataState = atom<EditorPostData>({
     key    : "remotePostDataState",
@@ -58,20 +35,18 @@ export const remotePostDataState = atom<EditorPostData>({
                     });
                     if ( resp.status == 200 ){
                         const updateObj = await resp.json() as unknown as IPostData;
-                        console.log( "updating Post state" );
                         setSelf({
                             ...postDataState,
-                            record     : postDataState.record,
+                            record     : updateObj,
                             sendRequest: false,
                             updateList : true,
                             asyncState : AsyncState.Complete
                         });
                     } else {
-                        console.log( "no data returned" );
                         setSelf({
                             ...postDataState,
                             sendRequest: false,
-                            updateList : true,
+                            updateList : false,
                             asyncState : AsyncState.Error
                         });
                     }
@@ -95,15 +70,14 @@ export const remotePostDataState = atom<EditorPostData>({
                         .then( ( data ) => {
                             let self:EditorPostData =  {
                                 ...postDataState,
-                                fetchRecord:false,
-                                asyncState: AsyncState.Complete
+                                fetchRecord: false,
+                                asyncState : AsyncState.Complete
                             };
                             if ( data != null )
-                                setSelf({ ...self, record: data });//self.record = data;
+                                setSelf({ ...self, record: data });
                             else
                                 setSelf({ ...self, asyncState: AsyncState.Error });
                             console.log( "Fetch Resp:", { self, data });
-                            // setSelf({ ...self });
                         }).catch( () => {
                             setSelf({
                                 ...postDataState,

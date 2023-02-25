@@ -5,7 +5,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 config.autoAddCss = false;
 
-function PRApp(props: AppProps) {
+function PRApp( props: AppProps ) {
     const { Component, pageProps } = props;
 
     return (

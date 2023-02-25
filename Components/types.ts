@@ -25,9 +25,14 @@ export interface MakeRequest{
     asyncState?: AsyncState;
 }
 
-export interface UserScrapeRequest extends MakeRequest, Partial<IScrapeRequest> {};
+//TODO consolidate UserScrapeRequest & ActiveScrapeRequest. proper typing and use case will solve this
+export interface UserScrapeRequest extends MakeRequest, Partial<IScrapeRequest> {
+    isActive?:boolean;
+};
 
-export type ActiveScrapeRequest = IScrapeRequest&Partial<IScrapePostDataRequest>;
+export type ActiveScrapeRequest = IScrapeRequest & Partial<IScrapePostDataRequest> & {
+    isActive?:boolean;
+};
 
 export interface ScrapeQueue extends MakeRequest{
     queue: ActiveScrapeRequest[];
@@ -86,6 +91,11 @@ export const FilterSet:SearchFilter[] = [
         label    : "Raw ID",
         operation: FilterOperation.IN
     }
+    /*, { //TODO: actually finish filtering
+        dataKey  : "captureTime",
+        label    : "Captured After",
+        operation: FilterOperation.AFTER
+    }*/
 ];
 export const FilterMap = new Map();
 for ( let refFilter of FilterSet )

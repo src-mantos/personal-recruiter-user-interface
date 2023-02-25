@@ -1,15 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActiveScrapeRequest, StylableComponent, DelayedTask, AsyncState } from '../../Components/types';
 import FormStyles from '../../styles/Components/Form.module.scss';
-import HudStyles from '../../styles/Components/ScrapeHUD.module.scss';
-import tileStyle from '../../styles/Components/ScrapeTile.module.scss';
-import { IScrapePostDataRequest, IScrapeRequest } from 'data-service/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {  scrapeRequestState, queueState, runQueueState } from '../../Components/contexts/ScrapeContext';
-import { inputFocusSelectAll, onKeyPress } from '../../Components/FormUtils';
-import { faSearch, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ScrapeControls from './ScrapeControls';
 import ScrapeTile from './ScrapeTile';
 
 
@@ -55,11 +48,14 @@ const ScrapeDisplay = ( props?:StylableComponent ) => {
                 </button>
             </div>
 
-            {queueObj.queue.map( ( tile, i ) => (
-                <div key={'tile-'+tile.uuid} className={['column', 'is-narrow'].join( " " )}>
-                    <ScrapeTile {...tile} ></ScrapeTile>
-                </div>
-            ) )}
+            {queueObj.queue.map( ( tile, i ) => {
+                const tileProps:ActiveScrapeRequest = ( i==0 )? { ...tile, isActive: runObj.isRunning } : tile;
+                return (
+                    <div key={'tile-'+tile.uuid} className={['column', 'is-narrow'].join( " " )}>
+                        <ScrapeTile {...tileProps} ></ScrapeTile>
+                    </div>
+                );
+            })}
 
         </div>
     );
