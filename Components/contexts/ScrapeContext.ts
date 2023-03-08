@@ -1,28 +1,15 @@
 import { atom, selector, AtomEffect } from 'recoil';
 import { IScrapeRequest } from 'data-service/types';
 import { ActiveScrapeRequest, AsyncState, MakeRequest, ScrapeQueue, UserScrapeRequest } from '../types';
+import { requestLog, baseUrl } from './contextUtil';
 
 
-const baseUrl = process.env.NEXT_PUBLIC_HOST_URL; //'http://localhost:8080';
-
-
-const requestLog:{( key:string ):AtomEffect<any>} = ( key:string ) => ({ onSet }) => {
-    onSet( ( newVal ) => {
-        if ( newVal.sendRequest )
-            console.info( "Request: "+key, newVal );
-    });
-};
-const recoilLog:{( key:string ):AtomEffect<any>} = ( key:string ) => ({ onSet }) => {
-    onSet( ( newVal ) => {
-        console.info( "SET "+key, newVal );
-    });
-};
 
 /**
  * Store & Send User Scrape Request
  */
 export const scrapeRequestState = atom<UserScrapeRequest>({
-    key    : 'ScrapeRequestAtom',
+    key    : 'scrapeRequestState',
     default: { pageDepth: 3, sendRequest: false },
     effects: [
         requestLog( 'scrapeRequestState' ),
@@ -30,7 +17,7 @@ export const scrapeRequestState = atom<UserScrapeRequest>({
             onSet( ( userReq ) => {
                 const { sendRequest, keyword, location, pageDepth } = userReq;
                 if ( sendRequest && keyword !== undefined && keyword != "" ){
-                    let loc = new URL( baseUrl+'/dataservice/scrape/' );
+                    let loc = new URL( baseUrl+'scrape/' );
                     loc.searchParams.append( "keyword", keyword );
                     if ( location )
                         loc.searchParams.append( "location", location );
@@ -67,11 +54,11 @@ export const queueState = atom<ScrapeQueue>({
     key    : 'queueState',
     default: { sendRequest: false, queue: [], asyncState: AsyncState.Pending },
     effects: [
-        requestLog( 'ScrapeQueue' ),
+        requestLog( 'queueState' ),
         ({ setSelf, onSet }) => {
             onSet( ( queueObj ) => {
                 if ( queueObj.sendRequest ){
-                    let loc = baseUrl+'/dataservice/scrape/status';
+                    let loc = baseUrl+'scrape/status';
                     fetch( loc ).then( ( resp: Response ) => {
                         if ( resp.status == 200 ){
                             resp.json().then( ( remoteQueue:ActiveScrapeRequest[] ) => {
@@ -97,11 +84,11 @@ export const runQueueState = atom<MakeRequest&{isRunning:boolean}>({
     key    : "runQueueState",
     default: { sendRequest: false, isRunning: false, asyncState: AsyncState.Pending },
     effects: [
-        requestLog( 'ScrapeQueue' ),
+        requestLog( 'runQueueState' ),
         ({ setSelf, onSet, resetSelf }) => {
             onSet( ( runObj ) => {
                 if ( runObj.sendRequest ){
-                    let loc = baseUrl+'/dataservice/scrape/run';
+                    let loc = baseUrl+'scrape/run';
                     fetch( loc, { method: 'PATCH' }).then( ( resp: Response ) => {
                         if ( resp.status == 200 )
                             setSelf({ isRunning: true, sendRequest: false, asyncState: AsyncState.Complete });
@@ -125,7 +112,7 @@ export const removeScrapeRequest = atom<Partial<UserScrapeRequest>>({
         ({ setSelf, onSet, resetSelf }) => {
             onSet( ( remove ) => {
                 if ( remove.sendRequest && remove.uuid !== undefined ){
-                    const loc = new URL( baseUrl+'/dataservice/scrape/'+encodeURIComponent( remove.uuid ) );
+                    const loc = new URL( baseUrl+'scrape/'+encodeURIComponent( remove.uuid ) );
                     fetch( loc.toString(), { method: 'DELETE' }).then( ( resp: Response ) => {
                         if ( resp.status == 200 )
                             setSelf({ sendRequest: false, asyncState: AsyncState.Complete });

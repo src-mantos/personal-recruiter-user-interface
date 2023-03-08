@@ -1,4 +1,3 @@
-import { IPostData } from 'data-service/types';
 import React from 'react';
 
 

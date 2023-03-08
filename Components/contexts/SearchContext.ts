@@ -1,24 +1,9 @@
 import { atom, AtomEffect, selector } from 'recoil';
 import { IPostData, ISearchQuery } from 'data-service/types';
 import { UserSearchFilter, SearchQuery, AsyncState, FilterMap, PostDataProps } from '../types';
+import { requestLog, resetAsyncStatus, baseUrl } from './contextUtil';
 
 
-const requestLog:{( key:string ):AtomEffect<any>} = ( key:string ) => ({ onSet }) => {
-    onSet( ( newVal ) => {
-        if ( newVal.sendRequest )
-            console.info( "Request: "+key, newVal );
-    });
-};
-
-const resetAsyncStatus:AtomEffect<any> = ({ onSet, setSelf }) => {
-    onSet( ( hasRequest ) => {
-        if ( hasRequest.asyncState && hasRequest.asyncState == AsyncState.Complete )
-            setTimeout( () => {
-                setSelf({ ...hasRequest, asyncState: AsyncState.Pending });
-                console.log( "resetting search state", AsyncState.Pending );
-            }, 500 );
-    });
-};
 
 export const searchRequestState = atom< SearchQuery<IPostData> >({
     key    : "searchRequestState",
@@ -37,7 +22,7 @@ export const searchRequestState = atom< SearchQuery<IPostData> >({
                     };
                     setSelf({ ...queryState, sendRequest: false, asyncState: AsyncState.Requested });
 
-                    const resp: Response = await fetch( '/dataservice/data/search/', {
+                    const resp: Response = await fetch( baseUrl+'data/search/', {
                         method : "POST",
                         headers: {
                             'Accept'      : 'application/json',

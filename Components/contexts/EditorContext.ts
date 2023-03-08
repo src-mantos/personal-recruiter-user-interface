@@ -1,10 +1,8 @@
 import { atom } from 'recoil';
 import { IPostData } from 'data-service/types';
 import { AsyncState, EditorPostData } from '../types';
+import { requestLog, baseUrl } from './contextUtil';
 
-const ErrorHandler = async ( resp: Response ): Promise<any> => {
-    console.error( resp );
-};
 
 export const remotePostDataState = atom<EditorPostData>({
     key    : "remotePostDataState",
@@ -16,6 +14,7 @@ export const remotePostDataState = atom<EditorPostData>({
         index      : -1
     },
     effects: [
+        requestLog("remotePostDataState"),
         ({ onSet, setSelf }) => {
             let stage = false; //chaining remote execution?
             onSet( ( postDataState ) => {
@@ -25,7 +24,7 @@ export const remotePostDataState = atom<EditorPostData>({
                         sendRequest: false,
                         asyncState : AsyncState.Pending
                     });
-                    const resp: Response = await fetch( '/dataservice/post/update/', {
+                    const resp: Response = await fetch( baseUrl+ 'post/update/', {
                         method : "POST",
                         headers: {
                             'Accept'      : 'application/json',
@@ -60,7 +59,7 @@ export const remotePostDataState = atom<EditorPostData>({
                         fetchRecord: false,
                         asyncState : AsyncState.Pending
                     });
-                    fetch( '/dataservice/post/'+postDataState.record._id )
+                    fetch( baseUrl+'post/'+postDataState.record._id )
                         .then( ( resp: Response ) => {
                             if ( resp.status == 200 )
                                 return resp.json() as unknown as IPostData;
