@@ -2,9 +2,9 @@
 A standard Next JS service for interfacing with job post data.
 
 ## Usage
-- using yarn as your build tool
+This interface may be reachable, for any more functionality we need to have the rest of the suite up and running.
 - `yarn dev` will run the hot swap dev mode on 8080
-- `yarn build & yarn start` run in standard mode on 8080
+- `yarn deploy` run in standard mode on 8080
 
 ## Current Scope <!--TODO:keep this up to date/high-level change log-->
 

@@ -8,7 +8,6 @@
         "start": "next start -p 8080",
         "deploy": "yarn build && yarn start",
         "lint": "next lint",
-        "test": "jest --watch",
         "lint-fix": "next lint --fix --quiet"
     },
     "dependencies": {

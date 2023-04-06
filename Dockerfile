@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-# HACK: consider packaging a types release for data-service
+# HACK: TODO: consider packaging a types release for data-service
 RUN apk --no-cache add git
 
 RUN mkdir /home/suite
